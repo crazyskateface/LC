@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='content'style="padding-top:140px;" >
+	<div id="box" >
+{% if user.is_active %}Welcome '{{ user.username }}'
+{% else %}
+<h1>Login: </h1>
+<form id="login_form" method="post" action="/login/">
+            {% csrf_token %}
+            Username: <input type="text" name="username" value="" size="50" />
+            <br />
+            Password: <input type="password" name="password" value="" size="50" />
+            <br />
+
+            <input type="submit" value="submit" />
+        </form>
+        
+</div>
+</div>
+        {% endif %}
+{% endblock %}

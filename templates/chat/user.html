@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='content'style="padding-top:140px;" >
+	<div id="box" >
+{% if user.is_active %}Welcome '{{ user.username }}'
+{% else %}<a href="/login/">Login</a>{% endif %}
+
+
+<br />
+<br />
+<h2>This is {{userprof.ign}}'s profile!!!!</h2>
+
+<br />
+<br />
+<h3>Primary role: {{userprof.primRole}}</h3>
+<br />
+<h3>Secondary role: {{userprof.secRole}}</h3>
+
+
+
+</div>
+</div>
+{% endblock %}

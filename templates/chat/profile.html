@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script type="text/javascript">
+	function verify(){
+		var val =$("#ign_verify").val();
+		if(val != null|| !val.match("")){
+			window.location="/verify/"+val+"/"
+		}
+	}
+</script>
+<div class='content'style="padding-top:140px;" >
+	<div id="box" >
+	{% if user.is_active %}Welcome '{{ user.username }}'
+	{% else %}<a href="/login/">Login</a>{% endif %}
+	
+	<a href="/">CHAT NOW</a>
+	
+	
+	<br />
+	<br />
+	{% if prof.verified %}
+	
+	{% else %}
+	<br /> <h4>Verify your account:</h4>
+	<code>To verify: 'Change a mastery page to your summoner name. 
+		<br /> example:  Summoner:'herovit'  mastery page name: 'herovit' (any page)
+		<br /> and then Type that name here and click Verify.</code>
+	<br />
+	<label>IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='' />
+	<br />{% if content %}{% else %}<span class='error' style="color:red;">Mastery page not valid.</span>{% endif %}
+	</div>
+</div>
+{% endif %}
+{% endblock %}
