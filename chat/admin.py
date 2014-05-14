@@ -1,5 +1,5 @@
 from django.contrib import admin
-from chat.models import UserProfile, Comments, Roll
+from chat.models import UserProfile, Comments, Roll, Emblem
 # Register your models here.
 
 
@@ -15,3 +15,7 @@ admin.site.register(Comments,CommentsAdmin)
 class RollAdmin(admin.ModelAdmin):
     fields = ('name',)
 admin.site.register(Roll, RollAdmin)
+
+class EmblemAdmin(admin.ModelAdmin):
+    fields = ('name', 'url',)
+admin.site.register(Emblem, EmblemAdmin)

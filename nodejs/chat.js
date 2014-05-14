@@ -28,6 +28,7 @@ io.configure(function(){
 
 
 var nicknames = {};
+var emblems = {};
 // when a user disconnects ...erase from nicknames
 checkSockets = function(id){
 	var dudesname = "";
@@ -80,17 +81,41 @@ io.sockets.on('connection', function (socket) {
 		// var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
 		var todays = curMonth+" "+dayOfMonth+", "+curYear+", "+curHour+":"+curMinute+" "+curMeridiem;
 		message = message+":"+todays;
+		var name = message.split(":");
+		console.log('sending '+emblems[name]);
+		
         socket.send(message);
     });
     
     socket.on('set nickname', function(name){
     	nickname = name;
+    	//console.log(name);
     	socket.broadcast.emit('new user connected',name);
     	nicknames[nickname] = socket.id;
-    	console.log(nicknames);
-    	socket.broadcast.emit('new user', nicknames);
-    	socket.emit('new user', nicknames);
+    	var emblem_url = "";
+    	values = querystring.stringify({
+            comment: name,
+            sessionid: socket.handshake.cookie['sessionid'],
+        });
+    	
+    	var options = {
+    		host: 'localhost',port:3000,path: '/node_emblem',method: 'POST',headers:{'Content-Type': 'application/x-www-form-urlencoded','Content-Length':values.length}
+    	};
+    	var req = http.request(options, function(res){
+    		res.setEncoding('utf8');
+    		res.on('data', function(emblem){
+		    	emblems[name] = emblem;
+		    	console.log(emblems[name]);
+		    	socket.broadcast.emit('new user', nicknames,emblems);
+		    	socket.emit('new user', nicknames, emblems);
+    		});
+    	});
+    	req.write(values);
+    	req.end();
+    	
+    	
     });
+    
     //socket.sockets[socket.id].emit
     //Client is sending message through socket.io
     socket.on('send_message', function (message) {
@@ -100,14 +125,7 @@ io.sockets.on('connection', function (socket) {
         });
         
         var options = {
-            host: 'localhost',
-            port: 3000,
-            path: '/node_api',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': values.length
-            }
+            host: 'localhost',port: 3000,path: '/node_api',method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': values.length}
         };
         
         //Send message to Django server
@@ -142,7 +160,7 @@ io.sockets.on('connection', function (socket) {
 
 		var dude = checkSockets(socket.id);
 		socket.broadcast.emit('new user', nicknames);
-		socket.emit('new user', nicknames);
+		socket.emit('new user', nicknames,emblems);
 		socket.emit('user disconnected mother fucker', dude);
 		// socket.disconnect();
 		//console.log(nicknames);

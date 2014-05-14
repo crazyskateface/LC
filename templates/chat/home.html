@@ -1,7 +1,134 @@
 {% extends "base.html" %}
 
 {% block content %}
-    
+     <script>
+        	
+        	var users = [];
+        	var ding = new Audio("{{STATIC_URL}}noti.mp3");
+        	var emblems = {};
+        	$(document).ready(function(){
+        		
+        		
+        		var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
+        		var box = document.getElementById('box');
+        		var ndata = "";
+        		socket.on('connect', function(){
+        			socket.emit('set nickname', '{{prof.ign}}');
+        			
+        			box.scrollTop = box.scrollHeight;
+        			console.log("connect");
+        			
+        		});
+        		
+        		
+        		
+        		socket.on('new user connected',function(name){
+        			$('#comments').append('<br />'+name+' has connected to the chat!!');
+        			box.scrollTop = box.scrollHeight;
+        		});
+        		var entry_el = $('#comment');
+        		
+        		box.scrollTop = box.scrollHeight;
+        		
+        		
+        		//WHEN USER RECEIVES A MESSAGE FROM NODEJS
+        		socket.on('message', function(message){
+        			//escape html chars
+        			var data = message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        			
+        			
+        			
+        			
+        			//append message to the bottom of the list
+        			//   root: msg:May 2, 2014, 6:02 PM
+        			ndata = data.split(":");
+        			//ndata[0] is the user name
+        			//root
+        			//msg
+        			//May2, 2014, 6
+        			//02 PM
+        			var cdata = ndata.splice(1,ndata.length-3);
+        			var date = ndata.splice(ndata.length-2,ndata.length);
+        			console.log(date);
+        			cdata = cdata.join(":"); //msg
+        			var date = date.join(":");
+        			var emblem = emblems[ndata[0]]
+        			
+        			if(cdata.match("PJSalt")){
+        				console.log('pissin me off');
+        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a href="/user/'+ndata[0]+'/">'+ndata[0]+'</a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small>' );
+        			}else{
+        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a href="/user/'+ndata[0]+'/">'+ndata[0]+'</a></strong>:' +cdata + '<small>'+date+'</small>' );
+        			}
+        			
+        			//window.scrollBy(0, 10000000000);
+        			ding.play();
+  					box.scrollTop = box.scrollHeight;
+        			entry_el.focus();
+        		});
+        		
+        		
+        		
+        		entry_el.keypress(function(event){
+        			//when enter is pressed send input value to node server
+        			if(event.keyCode !=13) return;
+        			var msg = entry_el.attr('value');
+        			
+        			if(msg){
+        				socket.emit('send_message', msg, function(data){
+        					console.log(data);
+        				});
+        				
+        				//clear input value
+        				entry_el.attr('value', '');
+        			}
+        		});
+        		
+        		
+        		socket.on('new user', function(users,emblems_fromNode){
+        			emblems = emblems_fromNode;
+        			$("#users").empty();
+        			$('#users').append('Users:');
+        			for(var user in users){
+        				//console.log(user+' joined');
+        				
+        				$('#users').append('<br /><a href="/user/'+user+'/">'+user+'</a> ');
+        			}
+        		});
+        		
+        		socket.on('user disconnected mother fucker', function(dude){
+        			$('#comments').append('<br />'+dude+' disconnected! ...that loser.');
+        			console.log(dude+' disconnected');
+        		});
+        		var kickButton = document.getElementById("kick");
+        		if(kickButton != null){
+        			kickButton.onclick = function () {                         // add dude name in params for buttons
+	        			var dudek = $("#kickbox").val();
+	        			socket.emit('kick', dudek);
+	        		};
+	        	};
+        		socket.on('kicked', function(){
+        			socket.disconnect()
+        			alert("You've been kicked!!!");
+        			window.location = "/logout/";
+        		});
+        		socket.on('banned', function(ip){
+        			//socket.disconnect();
+        			//alert("You're banned! "+ip);
+        			//window.location = "/";
+        		})
+        		//# END SOCKETS
+        		
+        		
+        		
+        		
+        		
+        		window.addEventListener('beforeunload',function(event){
+        			socket.disconnect();
+        		});
+        		
+        	});
+        </script>
     <br />
     <br />
     
@@ -13,9 +140,9 @@
     	{% for comment in comments %}
     		{% if comment.text == "PJSalt" %}
     		
-    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><a href="/user/{{comment.user}}/">{{comment.user}}</a>: <img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>{{comment.datetime}}</small>
+    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><strong><a href="/user/{{comment.user}}/">{{comment.user}}</strong></a>: <img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>{{comment.datetime}}</small>
     		{% else %}
-    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><a href="/user/{{comment.user}}/">{{comment.user}}</a>: {{comment.text}} <small>{{comment.datetime}}</small>
+    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><strong><a href="/user/{{comment.user}}/">{{comment.user}}</strong></a>: {{comment.text}} <small>{{comment.datetime}}</small>
     		{% endif %}
     	{% endfor %}
     	
@@ -40,6 +167,43 @@
     </div>
     
     <br />
+    <br />
+    <br />
+    
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+      <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
+    <br />
+    <br />
+     <br />
     <br />
     <br />
   

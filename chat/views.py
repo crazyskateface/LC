@@ -1,4 +1,4 @@
-from chat.models import Comments, User, UserProfile
+from chat.models import Comments, User, UserProfile, Emblem
 from chat.verify import ver_ign
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext, loader
@@ -19,6 +19,7 @@ def home(request):
     prof = UserProfile.objects.get(user=request.user)
     comments = Comments.objects.select_related().all().order_by('-datetime')[:100]
     comments = sorted(comments,key=attrgetter('datetime'))
+    
     return render(request, 'chat/home.html', locals())
 
 @login_required(login_url="/login/")
@@ -27,11 +28,17 @@ def verify(request, ign):
     content = ver_ign(ign)
     prof = UserProfile.objects.get(user=request.user)
     #print(content)
-    prof.verified = content
+    prof.verified = content['verified']
     print(prof.verified)
-    if content:
+    
+    if content['verified']:
         prof.ign = ign
         print(prof.ign)
+        prof.tier = content['tier']
+        divisions = {'I':1,'II':2,'III':3,'IV':4,'V':5}
+        div = content['division']
+        prof.division = divisions[div]
+        
     prof.save()
     return render(request, 'chat/profile.html', locals())
 
@@ -54,8 +61,25 @@ def node_api(request):
         
         return HttpResponse("Everything worked :)")
     except Exception, e:
+        
         return HttpResponseServerError(str(e))
-    
+
+@csrf_exempt
+def node_emblem(request):
+    try:
+        session = Session.objects.get(session_key=request.POST.get('sessionid'))
+        user_id = session.get_decoded().get('_auth_user_id')
+        user = User.objects.get(id=user_id)
+        prof = UserProfile.objects.get(user=user)
+        #Debug.log('suck')
+        emblem = Emblem.objects.get(name=prof.tier)
+        return HttpResponse(emblem)
+    except Exception, e:
+        print('suck')
+        return HttpResponseServererror(str(e))
+        
+         
+
 @login_required(login_url="/login/")
 def prof(request):
     prof = UserProfile.objects.get(user=request.user)
@@ -100,7 +124,7 @@ def register(request):
             # did the user provide a 
             profile.ign = 'guest-'+user.username
             
-            
+            profile.verified = False;
             profile.save()
             
             registered = True

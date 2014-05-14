@@ -4,12 +4,11 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Comments(models.Model):
-    user = models.ForeignKey(User)
-    text = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now_add=True)
-    class Meta:
-        ordering = ['datetime']
+class Emblem(models.Model):
+    url = models.CharField(max_length=150)
+    name = models.CharField(max_length=40)
+    def __unicode__(self):
+        return self.url
         
         
 class Roll(models.Model):
@@ -38,6 +37,12 @@ class UserProfile(models.Model):
         return self.user.username
     
     
-    
+class Comments(models.Model):
+    user = models.ForeignKey(User)
+    #profz= models.ForeignKey(UserProfile, null=True, blank=True)
+    text = models.CharField(max_length=255)
+    datetime = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['datetime']
 
     

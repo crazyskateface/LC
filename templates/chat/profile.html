@@ -20,15 +20,30 @@
 	<br />
 	<br />
 	{% if prof.verified %}
+	<label>Ign:</label> {{prof.ign}} <br />
+	<label>Rank: </label> {{prof.tier}} <br />
+	<label>Division: </label> {{prof.division}} <br />
+	<label>Primary Role:</label><select id='primRole'><option value='adc'>adc</option>
+		<option value='support'>support</option>
+		<option value='jungle'>jungle</option>
+		<option value='mid'>mid</option>
+		<option value='top'>top</option>
+	</select> <br />
+	<label>Second  Role:</label><select id='secRole'><option value='adc'>adc</option>
+		<option value='support'>support</option>
+		<option value='jungle'>jungle</option>
+		<option value='mid'>mid</option>
+		<option value='top'>top</option>
+	</select> <br />
 	
 	{% else %}
 	<br /> <h4>Verify your account:</h4>
-	<code>To verify: 'Change a mastery page to your summoner name. 
-		<br /> example:  Summoner:'herovit'  mastery page name: 'herovit' (any page)
-		<br /> and then Type that name here and click Verify.</code>
+	<code>To verify: 'Change a mastery page to 'AP'. 
+		<br /> example:  Summoner:'herovit'  mastery page name: 'AP' (any page)
+		<br /> and then Type that name here and click Verify. <strong>NO SPACES</strong></code>
 	<br />
-	<label>IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='' />
-	<br />{% if content %}{% else %}<span class='error' style="color:red;">Mastery page not valid.</span>{% endif %}
+	<label>IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
+	<br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% else %}{% endif %}
 	</div>
 </div>
 {% endif %}
