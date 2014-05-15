@@ -14,6 +14,9 @@ from django.contrib.auth import authenticate, login, REDIRECT_FIELD_NAME, logout
 
 import redis
 
+
+rooms = ['lobby', 'duos']
+
 @login_required(login_url="/login/")
 def home(request):
     prof = UserProfile.objects.get(user=request.user)
@@ -21,6 +24,15 @@ def home(request):
     comments = sorted(comments,key=attrgetter('datetime'))
     
     return render(request, 'chat/home.html', locals())
+
+def room(request, room):
+    if room not in rooms:
+        room = 'lobby'
+    prof = UserProfile.objects.get(user=request.user)
+    comments = Comments.objects.select_related().all().order_by('-datetime')[:100]
+    comments = sorted(comments,key=attrgetter('datetime'))
+    
+    return render(request, 'chat/'+room+'.html', locals())
 
 @login_required(login_url="/login/")
 def verify(request, ign):
@@ -34,10 +46,12 @@ def verify(request, ign):
     if content['verified']:
         prof.ign = ign
         print(prof.ign)
-        prof.tier = content['tier']
+        if content['tier'] != "":
+            prof.tier = content['tier']
         divisions = {'I':1,'II':2,'III':3,'IV':4,'V':5}
         div = content['division']
-        prof.division = divisions[div]
+        if div != "":
+            prof.division = divisions[div]
         
     prof.save()
     return render(request, 'chat/profile.html', locals())
@@ -86,7 +100,11 @@ def prof(request):
     return render(request, 'chat/profile.html', locals())
 
 def user_prof(request, uname):
-                                                                                    # CHECK IF PROFILE EXISTS
+    #str = "-"
+    #unamelst = uname.split(str)                                             # CHECK IF PROFILE EXISTS
+    #unamelst.pop(0)
+    #uname = str.join(unamelst)
+    #print(uname)
     userProf = UserProfile.objects.get(ign=uname)
     return render(request, 'chat/user.html', {'userprof':userProf})
 

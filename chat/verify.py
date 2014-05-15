@@ -20,7 +20,12 @@ def ver_ign(ign):
     data = json.loads(r.text)
     #print("RESULT:\n")
     #print(r.status_code)
-    stuff = data[ign]
+    if ign in data:
+        stuff = data[ign]
+    elif ign.lower() in data:
+        stuff = data[ign.lower()]
+    else:
+        return {'verified':False, 'tier':"",'division':""}
     idizzle = stuff['id']
     
     #print(idizzle)
@@ -42,12 +47,11 @@ def ver_ign(ign):
             print('\n Verified!')
     result.append(verified)   
     
-    page = 'https://prod.api.pvp.net/api/lol/na/v2.4/league/by-summoner/'+str(idizzle)+'?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
-    r = requests.get(page,verify=False)
-    data = json.loads(r.text)
-    
     page = 'https://prod.api.pvp.net/api/lol/na/v2.4/league/by-summoner/'+str(idizzle)+'/entry?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
     r = requests.get(page,verify=False)
+    print(r.status_code)
+    if r.status_code == 404 or r.status_code == "404":
+        return {'verified':verified,'tier':"",'division':""}
     data = json.loads(r.text)
     data = data[str(idizzle)]
     data = data[0]

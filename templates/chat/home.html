@@ -6,15 +6,16 @@
         	var users = [];
         	var ding = new Audio("{{STATIC_URL}}noti.mp3");
         	var emblems = {};
+        	
         	$(document).ready(function(){
         		
-        		
+        		var room="lobby";
         		var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
         		var box = document.getElementById('box');
         		var ndata = "";
         		socket.on('connect', function(){
-        			socket.emit('set nickname', '{{prof.ign}}');
-        			
+        			socket.emit('set nickname', '{{prof.ign}}','{{prof.isMod}}');
+        			//socket.emit('joinRoom','lobby');
         			box.scrollTop = box.scrollHeight;
         			console.log("connect");
         			
@@ -23,6 +24,7 @@
         		
         		
         		socket.on('new user connected',function(name){
+        			console.log('new user connected to client name: ' + name);
         			$('#comments').append('<br />'+name+' has connected to the chat!!');
         			box.scrollTop = box.scrollHeight;
         		});
@@ -52,7 +54,8 @@
         			console.log(date);
         			cdata = cdata.join(":"); //msg
         			var date = date.join(":");
-        			var emblem = emblems[ndata[0]]
+        			var emblem = emblems[ndata[0]];  //ndata[0] is name    emblems[name] = bronzeEmblem ie
+        			var alerted = false;
         			
         			if(cdata.match("PJSalt")){
         				console.log('pissin me off');
@@ -88,11 +91,13 @@
         		socket.on('new user', function(users,emblems_fromNode){
         			emblems = emblems_fromNode;
         			$("#users").empty();
+        			console.log('changing users list to room '+room);
+        			$('#users').append('<h4>'+room+'</h4>');
         			$('#users').append('Users:');
         			for(var user in users){
-        				//console.log(user+' joined');
+        				console.log(user+' joined');
         				
-        				$('#users').append('<br /><a href="/user/'+user+'/">'+user+'</a> ');
+        				$('#users').append('<br /><a href="/user/'+user+'/">'+user+'</a> ');                                   //add emblem
         			}
         		});
         		
@@ -107,6 +112,12 @@
 	        			socket.emit('kick', dudek);
 	        		};
 	        	};
+	        	
+	        	socket.on("alert",function(message){
+	        		alert(message);
+	        		alerted = true;
+	        	});
+	        	
         		socket.on('kicked', function(){
         			socket.disconnect()
         			alert("You've been kicked!!!");
@@ -120,12 +131,36 @@
         		//# END SOCKETS
         		
         		
-        		
+        		$("#rooms").on('change', function(){
+        			var thisval = this.value;
+        			alert('Changing to room:' + thisval);
+        			socket.emit('joinRoom', thisval, function (data) {
+				      if(data){
+				      	room = thisval;
+				      	$("#comments").empty();
+	        			$("#comments").append('You have entered the '+thisval+' room!');
+	        			box.scrollTop = box.scrollHeight;
+	        			entry_el.focus();
+	        			changeUsersListDammit(thisval);
+	        			
+				      }else{
+				      	$('#rooms').val(room);
+				      }
+				    });	
+        			
+        			
+        			function changeUsersListDammit(room){
+        				var parent = $("#users");
+        				$("h4", parent).text(room);
+        			}
+        			//window.location = '/room/'+this.value+'/';
+        		});
         		
         		
         		window.addEventListener('beforeunload',function(event){
         			socket.disconnect();
         		});
+        		
         		
         	});
         </script>
@@ -137,6 +172,7 @@
   
     <div id="box" > <!--  border-width: 10px; border-style:inset; border-color:#fffffa; -->
     <div id="comments">
+    	<!--
     	{% for comment in comments %}
     		{% if comment.text == "PJSalt" %}
     		
@@ -145,7 +181,7 @@
     		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><strong><a href="/user/{{comment.user}}/">{{comment.user}}</strong></a>: {{comment.text}} <small>{{comment.datetime}}</small>
     		{% endif %}
     	{% endfor %}
-    	
+    	-->
     </div>
      <div class="input" >
     	<input type="text" id="comment" name="comment" />
@@ -166,6 +202,19 @@
     {% else %}{% endif %}
     </div>
     
+    <!-- rooms: 'lobby','duos','teams','bronze','silver','gold','platinum','diamond','challenger' -->
+    <select id='rooms'>
+    	<option value='lobby' selected>lobby</option>
+    	<option value='duos'>duos</option>
+    	<option value='teams'>teams</option>
+    	<option value='bronze'>bronze</option>
+    	<option value='silver'>silver</option>
+    	<option value='gold'>gold</option>
+    	<option value='platinum'>platinum</option>
+    	<option value='diamond'>diamond</option>
+    	<option value='challenger'>challenger</option>
+    	
+    </select>
     <br />
     <br />
     <br />
