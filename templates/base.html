@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title>Leauge Chat</title>
-        <link type="text/css" rel="stylesheet" href="{{STATIC_URL}}style.css" />
+        <title>League Chat</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
         <script src="{{STATIC_URL}}socket.io.js"></script> <!-- http://ec2-54-86-25-186.compute-1.amazonaws.com:4000 -->
+        <!--<link rel="stylesheet" href="{{MEDIA_URL}}style.css" type="text/css" media="screen, projection" /> -->
+        <link href="{{MEDIA_URL}}bootstrap/css/bootstrap.css" rel="stylesheet">
         
        <script type="text/javascript">
        	$(function() {  
@@ -18,6 +20,25 @@
 		        menu.slideToggle();  
 		    });  
 		});
+		$(document).ready(function(){
+			var entry_search = $("#searchAndDiscover");
+    		entry_search.keypress(function(event){
+    			//when enter is pressed send input value to node server
+    			if(event.keyCode !=13) return;
+    			var msg = entry_search.attr('value');
+    			console.log(msg);
+    			if(msg){
+    				window.location = "/search/"+msg;
+    				
+    				
+    				//clear input value
+    				entry_search.attr('value', '');
+    			}
+    		});
+		
+		
+		});
+		
 		$(window).resize(function(){  
 		    var w = $(window).width();  
 		    if(w > 320 && menu.is(':hidden')) {  
@@ -26,189 +47,7 @@
 		});
        </script>
 	<!--                 STYLE       -->
-	<style type="text/css">
-    	
-    	body{
-			background-image: url('{{STATIC_URL}}bg.png');
-			background-size: cover;
-		}
-    	
-    	
-    	label{
-    		font-size:large;
-    		strong:solid;
-    	}
-    	
-    	small{
-    		color:#aaaaaa;
-    		font-size:xx-small;
-    		float:right;
-    	}
-    	h4{
-    		color:#007889;
-    	}
-    	.content{
-    		padding:90px 0px 10% 10%;
-    	}
-    	#box {
-    		float:left; overflow:auto; height:410px; width:70%; padding:0px 0px 0px 0px;box-shadow:inset 0px 5px 10px 0px #888;background-color:white;
-    		word-wrap:break-word;
-    		position:justify;
-    		
-    	}
-    	#comments{
-    		font-family:Arial;
-    	}
-    	#comment{
-    		float:left;position:relative;bottom:0; width:95%;box-shadow:inset 0px 1px 2px 0px #888;
-    	}
-    	
-    	
-    	
-    	
-    	
-    	/* START NAV MENU */
-		nav {
-		  background-color:#333333;
-		  height:auto;
-		  width:50%; 
-		  right:0;
-		  left:0;
-		  margin-bottom:0;
-		  text-align:center;
-		  margin:0 auto;
-		  position:relative;
-		  overflow:visible;
-		  
-		}
-		 
-		 
-		nav ul {
-		  font-family: Arial, Verdana;
-		  font-size: 20px;
-		  margin: 0;
-		  padding: 0;
-		  list-style: none;
-		}
-		 
-		nav ul li {
-		  display: block;
-		  position: relative;
-		  float: left;
-		 
-		}
-		 
-		nav li ul { 
-		  display: none; 
-		}
-		 
-		nav ul li a {
-		  display: block;
-		  text-decoration: none;
-		  padding: 7px 15px 3px 15px;
-		  background: #565656;
-		  color: #ffffff;  
-		  margin-left: 1px;
-		  white-space: nowrap;
-		  height:30px; /* Width and height of top-level nav items */
-		  width:90px;
-		  text-align:center;
-		 
-		}
-		 
-		nav ul li a:hover { 
-		  background: #005466; 
-		}
-		 
-		nav li:hover ul {
-		  display: block;
-		  position: absolute;
-		  height:30px;
-		}
-		 
-		nav li:hover li {
-		  float: none;
-		  font-size: 11px;
-		 
-		}
-		 
-		nav li:hover a { 
-		  background: #3A464F; 
-		  height:30px; /* Height of lower-level nav items is shorter than main level */
-		}
-		 
-		nav li:hover li a:hover { 
-		  background: #95A9B1; 
-		}
-		 
-		nav ul li ul li a {
-		    text-align:left; /* Top-level items are centered, but nested list items are left-aligned */
-		}
-		
-		@media screen and (max-width: 600px) {  
-		    nav {   
-		        height: auto;  
-		    }  
-		    nav ul {  
-		        width: 100%;  
-		        display: block;  
-		        height: auto;  
-		    }  
-		    nav li {  
-		        width: 50%;  
-		        float: left;  
-		        position: relative;  
-		    }  
-		    nav li a {  
-		        border-bottom: 1px solid #576979;  
-		        border-right: 1px solid #576979;  
-		    }  
-		    nav a {  
-		        text-align: left;  
-		        width: 100%;  
-		        text-indent: 25px;  
-		    }  
-		}  
-		
-		@media only screen and (max-width : 480px) {  
-		    nav {  
-		        border-bottom: 0;  
-		    }  
-		    nav ul {  
-		        display: none;  
-		        height: auto;  
-		    }  
-		    nav a#pull {  
-		        display: block;  
-		        background-color: #283744;  
-		        width: 100%;  
-		        position: relative;  
-		    }  
-		    nav a#pull:after {  
-		        content:"";  
-		        background: url('nav-icon.png') no-repeat;  
-		        width: 30px;  
-		        height: 30px;  
-		        display: inline-block;  
-		        position: absolute;  
-		        rightright: 15px;  
-		        top: 10px;  
-		    }  
-		} 
-		
-		@media only screen and (max-width : 320px) {  
-		    nav li {  
-		        display: block;  
-		        float: none;  
-		        width: 100%;  
-		    }  
-		    nav li a {  
-		        border-bottom: 1px solid #576979;  
-		    }  
-		}
-		 
-		/* END NAV MENU */
-	</style>
+
 
 
 
@@ -217,26 +56,45 @@
 
     <body>
     	
-    <nav>
-    	<ul>
-    		<li><a href="#">Lc</a></li>
-    		<li><a href="/">home</a></li>
-    		<li><a href="/profile/">profile</a></li>
-    		<li><a href="/">contact</a></li>
-    		<li><a href="/">duuuude</a></li>
-    		
-    	</ul>
-    	<ul style="float:right;">
-    		{% if user.is_active %}<li><a href="/logout/">logout</a></li>
-			{% else %}
-			<li><a href="/login/">login</a></li>
-			<li><a href="/register/">register</a></li>
-			
-			{% endif %}
-    	</ul>
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+    	<div class="container">
+    		<div class="navbar-header">
+    			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+    				<span class="sr-only">Toggle navigation</span>
+    				<span class="icon-bar"></span>
+    				<span class="icon-bar"></span>
+    				<span class="icon-bar"></span>
+    				
+    			</button>
+    			<a class="navbar-brand" href="#"><img src="{{STATIC_URL}}LC.png"></a>
+    		</div>
+    		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		    	<ul class="nav navbar-nav">
+		    		<li><a href="/">home</a></li>
+		    		<li><a href="/">chat</a></li>
+		    		<li><a href="/profile/">profile</a></li>
+		    		<li><a href="/">contact</a></li>
+		    		<li><a href="/">duuuude</a></li>
+		    		<li class="nuts"><input class="form-control" id='searchAndDiscover' type='search' placeholder='search users' /></li>
+		    		
+		    	</ul>
+		    	<ul class="nav navbar-nav navbar-right">
+		    		{% if user.is_active %}<li><a href="/logout/">logout</a></li>
+					{% else %}
+					<li><a href="/login/">login</a></li>
+					<li><a href="/register/">register</a></li>
+					
+					{% endif %}
+		    	</ul>
+	    	</div>
+    	</div>
     </nav>
     	
     	
     {% block content %}{% endblock %}
+    
+    
+    <script src="{{MEDIA_URL}}bootstrap/js/bootstrap.min.js"></script>
+    <script src="http://getbootstrap.com/assets/js/docs.min.js"></script>
     </body>
 </html>

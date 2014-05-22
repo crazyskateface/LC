@@ -4,47 +4,117 @@
 <script type="text/javascript">
 	function verify(){
 		var val =$("#ign_verify").val();
-		if(val != null|| !val.match("")){
+		if(val.length > 0){
 			window.location="/verify/"+val+"/"
 		}
 	}
+	$(document).ready(function(){
+		var roles = ['adc','support','jungle','top','mid'];
+		console.log("{{prof.primRole}} and "+ roles.indexOf("{{prof.primRole}}"));
+		$('#id_primRole').val(roles.indexOf("{{prof.primRole}}")+1);
+		$('#id_secRole').val(roles.indexOf("{{prof.secRole}}")+1);
+		
+		if($('#ign_verify').length){
+			var gign = "{{prof.ign}}";
+			var lst = gign.split("-");
+			var ign = lst.splice(1);
+			$('#ign_verify').val(ign)
+		}
+		
+		
+		
+	});
 </script>
-<div class='content'style="padding-top:140px;" >
-	<div id="box" >
-	{% if user.is_active %}Welcome '{{ user.username }}'
+<style type="text/css">
+	.form-update {
+      	
+        max-width: 400px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-update .form-update-heading,
+      .form-update .selectbox {
+        margin-bottom: 10px;
+      }
+      .form-update input[type="text"],
+      .form-update input[type="select"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+</style>
+
+
+
+
+
+
+<div class='container'style="padding-top:100px;" >
+	
+	<span style="color:#fff">{% if user.is_active %}Welcome '{{ user.username }}'
 	{% else %}<a href="/login/">Login</a>{% endif %}
 	
-	<a href="/">CHAT NOW</a>
+	<a href="/">CHAT NOW</a></span>
 	
 	
 	<br />
 	<br />
 	{% if prof.verified %}
-	<label>Ign:</label> {{prof.ign}} <br />
-	<label>Rank: </label> {{prof.tier}} <br />
-	<label>Division: </label> {{prof.division}} <br />
-	<label>Primary Role:</label><select id='primRole'><option value='adc'>adc</option>
-		<option value='support'>support</option>
-		<option value='jungle'>jungle</option>
-		<option value='mid'>mid</option>
-		<option value='top'>top</option>
-	</select> <br />
-	<label>Second  Role:</label><select id='secRole'><option value='adc'>adc</option>
-		<option value='support'>support</option>
-		<option value='jungle'>jungle</option>
-		<option value='mid'>mid</option>
-		<option value='top'>top</option>
-	</select> <br />
+	<form class="form-update" id="update_form" method="post" action="/profile/">
+		{% csrf_token %}
+		<h2 class="form-update-heading">Profile:</h2>
+		
+		{{prof_form.errors}}
+		{% if nice == True %}
+		<span style="color:#00cc22">Successfully updated!</span><br />
+		{% endif %}
+		<label>Ign:</label> <input type="text" class="input-block-level" id="id_ign" name="ign" value="{{prof.ign}}" /><br />
+		
+		<label>Rank: </label> {{prof.tier}} <br />
+		<label>Division: </label> {{prof.division}} <br />
+		
+		<label>Primary Role:</label><select id='id_primRole' name="primRole" class="input-block-level">
+			<option value="1">adc</option>
+			<option value="2">support</option>
+			<option value="3">jungle</option>
+			<option value="4">top</option>
+			<option value="5">mid</option>
+		</select> <br />
+		<label>Second  Role:</label><select id='id_secRole' name="secRole" class="input-block-level">
+			<option value="1">adc</option>
+			<option value="2">support</option>
+			<option value="3">jungle</option>
+			<option value="4">top</option>
+			<option value="5">mid</option>
+		</select> <br />
+		<button class="btn btn-large btn-primary" type="submit">Update</button>
+	</form>
 	
 	{% else %}
 	<br /> <h4>Verify your account:</h4>
-	<code>To verify: 'Change a mastery page to 'AP'. 
-		<br /> example:  Summoner:'herovit'  mastery page name: 'AP' (any page)
+	<code>To verify: 'Change a mastery page to your summoner name. 
+		<br /> example:  Summoner 'Adriatticus'  mastery page name: 'Adriatticus' (any page)
 		<br /> and then Type that name here and click Verify. <strong>NO SPACES</strong></code>
 	<br />
-	<label>IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
-	<br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% else %}{% endif %}
-	</div>
+	<br />
+	<label style="color:white;">IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
+	<br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% elif contents %}<span class='error' style="color:red;">That user already verified!</span>{% elif finders %}<span class='error' style="color:red;">LoL user not found!</span>{% else %}{% endif %}
+	
+	<br />
+	<br />
+	<br />
+	<br />
+	<pre class="text-warning"><span style="font-size:x-large;">You <span style="font-size:xx-large;">MUST</span> change it back immediately afterwards!!</span></pre>
+	
 </div>
 {% endif %}
 {% endblock %}

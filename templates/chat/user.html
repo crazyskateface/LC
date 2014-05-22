@@ -3,21 +3,30 @@
 {% block content %}
 <div class='content'style="padding-top:140px;" >
 	<div id="box" >
-{% if user.is_active %}Welcome '{{ user.username }}'
-{% else %}<a href="/login/">Login</a>{% endif %}
+	{% if user.is_active %}Welcome '{{ user.username }}'
+		{% else %}<a href="/login/">Login</a>{% endif %}
+		
+		
+{% if not userProf %}
+<br />
+<br />
+	<h1>User not found</h1>
+{% else %}
+	
 
 
 <br />
 <br />
-<h2>This is {{userprof.ign}}'s profile!!!!</h2>
+<h2>This is {{userProf.ign}}'s profile!!!!</h2>
 
 <br />
+<h3>Rank: {{userProf.tier}} {{userProf.division}}</h3>
 <br />
-<h3>Primary role: {{userprof.primRole}}</h3>
+<h3>Primary role: {{userProf.primRole}}</h3>
 <br />
-<h3>Secondary role: {{userprof.secRole}}</h3>
+<h3>Secondary role: {{userProf.secRole}}</h3>
 
-
+{% endif %}
 
 </div>
 </div>

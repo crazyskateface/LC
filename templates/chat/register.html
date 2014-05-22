@@ -1,19 +1,53 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='content'style="padding-top:140px;" >
-	<div id="box" >
+<style type="text/css">
+	
+
+      .form-signup {
+      	
+        max-width: 400px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signup .form-signup-heading,
+      .form-signup .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signup input[type="text"],
+      .form-signup input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+</style>
+<div class="container">
 {% if user.is_active %}Welcome '{{ user.username }}'
 {% else %}
-<div>
-<h1>Sign up:</h1>
-<form id="user_form" method="post" action="/register/" enctype="multipart/form-data">
+
+
+<form class="form-signup" id="user_form" method="post" action="/register/" enctype="multipart/form-data">
 	{% csrf_token %}
+	<h2 class="form-signup-heading">Sign up</h2>
+	{% for input in user_form %}
+	{{input.errors}}
+	{% endfor %}
+	<input id="id_username" class="input-block-level" maxlength="30" name="username" type="text" placeholder="username" /> 
+	<input id="id_password1" class="input-block-level" name="password1" type="password" placeholder="password" />
+	<input id="id_password2" class="input-block-level" name="password2" type="password" placeholder="password again" />
 	
-	{{ user_form.as_p }}
+	<!-- {{ user_form.as_p }} -->
+	<button class="btn btn-large btn-primary" type="submit">Sign up</button>
 	
-	
-	<input type="submit" name="submit" value="Register" />
 	
 	
 	
@@ -22,8 +56,7 @@
 
 
 </div>
-</div>
-</div>
+
 
 
 {% endif %}

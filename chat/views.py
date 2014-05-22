@@ -1,6 +1,6 @@
 from chat.models import Comments, User, UserProfile, Emblem
 from chat.verify import ver_ign
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext, loader
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.views.decorators.csrf import csrf_exempt
@@ -20,6 +20,7 @@ rooms = ['lobby', 'duos']
 @login_required(login_url="/login/")
 def home(request):
     prof = UserProfile.objects.get(user=request.user)
+    
     comments = Comments.objects.select_related().all().order_by('-datetime')[:100]
     comments = sorted(comments,key=attrgetter('datetime'))
     
@@ -37,9 +38,18 @@ def room(request, room):
 @login_required(login_url="/login/")
 def verify(request, ign):
     
-    content = ver_ign(ign)
+    
     prof = UserProfile.objects.get(user=request.user)
+    if UserProfile.objects.filter(ign=ign).exists():
+        contents = True
+        return render(request, 'chat/profile.html', locals())
+    
+    content = ver_ign(ign)
+    
     #print(content)
+    if content['verified'] == None:
+        finders = True
+        return render(request, 'chat/profile.html', {'finders':finders, 'prof':prof})
     prof.verified = content['verified']
     print(prof.verified)
     
@@ -87,7 +97,9 @@ def node_emblem(request):
         prof = UserProfile.objects.get(user=user)
         #Debug.log('suck')
         emblem = Emblem.objects.get(name=prof.tier)
-        return HttpResponse(emblem)
+        list_of_info = str(prof.tier)+':'+str(prof.division)+':'+str(prof.primRole)+':'+str(prof.secRole)
+        embAndInfo = str(emblem)+':'+str(list_of_info)
+        return HttpResponse(str(embAndInfo))
     except Exception, e:
         print('suck')
         return HttpResponseServererror(str(e))
@@ -96,20 +108,69 @@ def node_emblem(request):
 
 @login_required(login_url="/login/")
 def prof(request):
+    context = RequestContext(request)
     prof = UserProfile.objects.get(user=request.user)
-    return render(request, 'chat/profile.html', locals())
+    nice = False
+    #if POST DATA
+    if request.method == 'POST':
+        print(prof.ign)
+        # attempt to grab info from the raw form info
+        print('into the posting')
+        prof_form = UserProfileForm(data=request.POST, instance=prof)
+        #profile_form = UserProfileForm(data=request.POST)
+        changed = False
+        guests = UserProfile.objects.filter(ign__endswith='guest-'+request.POST['ign'])
+        c = len(guests)+1
+        
+        # if changing the ign need to set verified = false 
+        if(request.POST['ign'] != prof.ign):
+            prof.verified = False
+            changed = True
+            #if the two forms have valid data ...
+        if prof_form.is_valid():
+            
+            if changed == True:
+                prof.ign = str(c)+'guest-' +prof_form.cleaned_data['ign']
+            
+            prof.primRole = prof_form.cleaned_data['primRole']
+            prof.secRole = prof_form.cleaned_data['secRole']
+            
+            prof.save()
+            nice = True
+        else:
+            print(prof_form.errors)
+    else:
+        prof_form = UserProfileForm(instance=prof)
+        
+    return render_to_response(
+            'chat/profile.html',
+            locals(),
+            context)
+            
 
-def user_prof(request, uname):
-    #str = "-"
-    #unamelst = uname.split(str)                                             # CHECK IF PROFILE EXISTS
-    #unamelst.pop(0)
-    #uname = str.join(unamelst)
-    #print(uname)
-    userProf = UserProfile.objects.get(ign=uname)
-    return render(request, 'chat/user.html', {'userprof':userProf})
+def search(request, uname):
+    userProf = None
+    users = None                                   
+        
+    userProf = UserProfile.objects.filter(ign=uname)
+    
+        
+    try:
+        userlist = UserProfile.objects.filter(ign__icontains=uname)
+    except userlist.DoesNotExist:
+        users = None
+    return render(request, 'chat/search.html', locals())
 
 
+def user_prof(request, uname):                          
+    try:
+        userProf = UserProfile.objects.get(ign=uname)
+    except:
+        userProf = None
 
+    return render(request, 'chat/user.html', locals())
+
+#
 # CREATE USER PROFILE BRUH
 def register(request):
     context = RequestContext(request)
@@ -199,13 +260,8 @@ def logoutz(request):
     return HttpResponseRedirect('/login/')
     
     
-    
-    
-    
-    
-    
-    
-    
+def handler404(request):
+    return render(request, '404.html')
     
     
     

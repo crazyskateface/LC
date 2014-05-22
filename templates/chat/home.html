@@ -2,16 +2,22 @@
 
 {% block content %}
      <script>
-        	
+        	window.onLoad = function(){
+        		
+        	}
         	var users = [];
         	var ding = new Audio("{{STATIC_URL}}noti.mp3");
-        	var emblems = {};
+        	
+        	var emblems;
+        	var name="{{prof.ign}}";
+        	
+        	
         	
         	$(document).ready(function(){
         		
         		var room="lobby";
         		var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
-        		var box = document.getElementById('box');
+        		var box = document.getElementById('comments');
         		var ndata = "";
         		socket.on('connect', function(){
         			socket.emit('set nickname', '{{prof.ign}}','{{prof.isMod}}');
@@ -49,19 +55,30 @@
         			//msg
         			//May2, 2014, 6
         			//02 PM
-        			var cdata = ndata.splice(1,ndata.length-3);
-        			var date = ndata.splice(ndata.length-2,ndata.length);
+        			//BRONZE
+        			//1
+        			//adc
+        			//adc
+        			var cdata = ndata.splice(1,ndata.length-7); 
+        			var date = ndata.splice(1,ndata.length-5);
+        			var tier = ndata[1];
+        			var div = ndata[2];
+        			var prim = ndata[3];
+        			var sec = ndata[4];
+        			
         			console.log(date);
         			cdata = cdata.join(":"); //msg
         			var date = date.join(":");
+        			console.log(emblems);
         			var emblem = emblems[ndata[0]];  //ndata[0] is name    emblems[name] = bronzeEmblem ie
+        			
         			var alerted = false;
         			
         			if(cdata.match("PJSalt")){
         				console.log('pissin me off');
-        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a href="/user/'+ndata[0]+'/">'+ndata[0]+'</a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small>' );
+        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a class="infoz" href="/user/'+ndata[0]+'/">'+ndata[0]+'<span>IGN: '+ndata[0]+'<br />Rank: <img src="'+emblem+'"> '+tier+' '+div+'<br />Primary Role: '+prim+'<br />Secondary Role: '+sec+'</span></a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small>' );
         			}else{
-        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a href="/user/'+ndata[0]+'/">'+ndata[0]+'</a></strong>:' +cdata + '<small>'+date+'</small>' );
+        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a class="infoz" href="/user/'+ndata[0]+'/">'+ndata[0]+'<span>IGN: '+ndata[0]+'<br />Rank: <img src="'+emblem+'"> '+tier+' '+div+'<br />Primary Role: '+prim+'<br />Secondary Role: '+sec+'</span></a></strong>:' +cdata + '<small>'+date+'</small>' );
         			}
         			
         			//window.scrollBy(0, 10000000000);
@@ -76,8 +93,29 @@
         			//when enter is pressed send input value to node server
         			if(event.keyCode !=13) return;
         			var msg = entry_el.attr('value');
-        			
-        			if(msg){
+        			if(msg.substring(0,2) == '/w'){
+        				
+        				socket.emit('private message',name, msg,function(data){
+        					
+    						console.log(data);
+        					var lst = msg.split(" ");
+        					var wandname = lst[0]+' '+lst[1];
+        					var ndata = msg.substring(wandname.length);
+        					if(data){
+	        					
+	        					$('#comments').append('<br /><span style="color:pink;"><strong>To: <a href="/user/'+lst[1]+'/" style="color:pink;">'+lst[1]+'</a></strong>:' +ndata +'<small>'+getNow()+'</small></span>' );
+        					}else{
+        						$('#comments').append('<br /><span style="color:pink;">User '+lst[1]+' is not signed in!</span>' );
+        					}
+        					box.scrollTop = box.scrollHeight;
+        				entry_el.focus();
+        				});
+        				console.log('Private message!!! = '+msg);
+        				//clear input value
+        				
+        				entry_el.attr('value', '');
+        			}
+        			else if(msg){
         				socket.emit('send_message', msg, function(data){
         					console.log(data);
         				});
@@ -128,7 +166,7 @@
         			//alert("You're banned! "+ip);
         			//window.location = "/";
         		})
-        		//# END SOCKETS
+        		
         		
         		
         		$("#rooms").on('change', function(){
@@ -140,6 +178,8 @@
 				      	$("#comments").empty();
 	        			$("#comments").append('You have entered the '+thisval+' room!');
 	        			box.scrollTop = box.scrollHeight;
+	        			// $("#comments").append('<div class="row" style="bottom:0;position:absolute;width:100%;"><div class="col-md-12" ><input type="text" class="form-control input-sm" id="comment" name="comment" style="float:left;margin-left:-15px;width:104%;background-color:white;"/></div></div>');
+	        			// entry_el = $("#comment");
 	        			entry_el.focus();
 	        			changeUsersListDammit(thisval);
 	        			
@@ -157,8 +197,65 @@
         		});
         		
         		
+        		socket.on('private',function(message){
+        			
+        			//escape html chars
+        			var data = message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        			
+        			//data = 0 from  1 message
+        			
+        			ndata = data.split(":");
+        			var cdata = ndata.splice(1,ndata.length-3);
+        			var date = ndata.splice(ndata.length-2,ndata.length);
+        			console.log(date);
+        			cdata = cdata.join(":"); //msg
+        			var date = date.join(":");
+        			var emblem = emblems[ndata[0]];  //ndata[0] is name    emblems[name] = bronzeEmblem ie
+        			var alerted = false;
+        			
+        			if(cdata.match("PJSalt")){
+        				console.log('pissin me off');
+        				$('#comments').append('<br /><span style="color:pink;"><img src="'+emblem+'" height="20" width="20"><strong>From <a href="/user/'+ndata[0]+'/" style="color:pink;">'+ndata[0]+'</a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small></span>' );
+        			}else{
+        				$('#comments').append('<br /><span style="color:pink;"><img src="'+emblem+'" height="20" width="20"><strong>From <a href="/user/'+ndata[0]+'/" style="color:pink;">'+ndata[0]+'</a></strong>:' +cdata + '<small>'+date+'</small></span>' );
+        			}
+        			
+        			//window.scrollBy(0, 10000000000);
+        			ding.play();
+  					box.scrollTop = box.scrollHeight;
+        			entry_el.focus();
+        		});
+        		
+        		
+        		
+        		//###############END SOCKET DESIGN
+        		
+        		function getNow(){
+					var objToday = new Date(),
+				    weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+				    dayOfWeek = weekday[objToday.getDay()],
+				    //domEnder = new Array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ),
+				    dayOfMonth = objToday.getDate(),
+				    months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
+				    curMonth = months[objToday.getMonth()],
+				    curYear = objToday.getFullYear(),
+				    curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+				    curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+				    curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
+				    curMeridiem = objToday.getHours() > 12 ? "p.m." : "a.m.";
+					// var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
+					var todays = curMonth+" "+dayOfMonth+", "+curYear+", "+curHour+":"+curMinute+" "+curMeridiem;
+					return todays;
+				}
+        		
+        		
+        		
+        		window.onload = function(){
+        			$("#comments").append('Welcome to the lobby '+name+'!');
+        		}
+        		
         		window.addEventListener('beforeunload',function(event){
-        			socket.disconnect();
+        			//socket.disconnect();
         		});
         		
         		
@@ -167,11 +264,11 @@
     <br />
     <br />
     
-    <div class="content" >
+    <div class="container" >
     
   
-    <div id="box" > <!--  border-width: 10px; border-style:inset; border-color:#fffffa; -->
-    <div id="comments">
+    <div id="box" class="row" style="height:400px;background-color:white;"> <!--  border-width: 10px; border-style:inset; border-color:#fffffa; -->
+    <div  class="col-md-8" >
     	<!--
     	{% for comment in comments %}
     		{% if comment.text == "PJSalt" %}
@@ -182,28 +279,41 @@
     		{% endif %}
     	{% endfor %}
     	-->
+    	<div class="row" >
+    		<div class="col-md-12">
+    			<div id="comments" style="overflow:scroll;background-color:white;height:370px;float:left;margin-left:-15px;width:104%;box-shadow:inset 0px 2px 5px 0px #888;">
+    				
+    			</div>
+    		</div>
+    	</div>
+    	<div class="row" style="bottom:-18;position:absolute;width:100%;">
+     		<div class="col-md-12" >
+	    	<input type="text" placeholder="Chat now!  PM: /w <name> <msg>" class="form-control input-sm" id="comment" name="comment" style="float:left;margin-left:-15px;width:104%;background-color:white;"/>
+	    	<!-- <input type="button" id="soundBtn" value="&#128266;" style="border-style:outset;" onClick=''/> -->
+	    	</div>
+    	</div>
     </div>
-     <div class="input" >
-    	<input type="text" id="comment" name="comment" />
-    	<!-- <input type="button" id="soundBtn" value="&#128266;" style="border-style:outset;" onClick=''/> -->
-    </div>
-    </div>
+    	
+    
     
     <!-- USERS      -->
-    <div style="float:left; overflow:auto; height:410px; width:19%; padding:0px 3px 0px 0px; box-shadow:inset 0px 2px 5px 0px #888;background-color:white;">
+    <div id="lobby" style="box-shadow:inset 0px 2px 5px 0px #888;height:400px;background-color:white;"class="col-md-2">
     	
     	<ul id="users">Users:</ul>
     </div>
     
     {% if prof.isMod %}
-    <div style="float:left; overflow:auto; height:410px; width:9%; padding:0px 3px 0px 0px; box-shadow:inset 0px 2px 5px 0px #888;background-color:white;">
-    	<input type="text" value="" id="kickbox" /><button id="kick" type="button">Kick</button>
+    <div id="modbox" style="box-shadow:inset 0px 2px 5px 0px #888;height:400px;background-color:white" class="col-md-2">
+    	<br />
+    	<input class="form-control input-sm" type="text" value="" id="kickbox" /><button id="kick" type="button">Kick</button>
     </div>
     {% else %}{% endif %}
-    </div>
+    
     
     <!-- rooms: 'lobby','duos','teams','bronze','silver','gold','platinum','diamond','challenger' -->
-    <select id='rooms'>
+    <br />
+    <div class="col-md-12" style="width:102.5%;float:left;margin-left:-15px;margin-top:10px">
+    <select id='rooms' class="form-control">
     	<option value='lobby' selected>lobby</option>
     	<option value='duos'>duos</option>
     	<option value='teams'>teams</option>
@@ -215,6 +325,14 @@
     	<option value='challenger'>challenger</option>
     	
     </select>
+    </div>
+    <!-- <div class="col-md-2">
+    	<span><input type="button" value="mute" /> <input type="button" value="unmute" /></span>
+    </div> -->
+    
+    </div>
+    
+    </div><!-- container end -->
     <br />
     <br />
     <br />

@@ -45,6 +45,7 @@ var emblem_links = {' ':'http://i.imgur.com/T0ZZt1i.png',
 var nicknames = {};
 //var inroom = {'lobby':{},'duos':{}};
 var emblems = {}; //{'travatticus': 'http://url.to.img.png', 'crazyskateface':'http://url.to.img.png'}
+var info = {};  //{'crazyskateface': ['BRONZE', 1, 'primRole', 'secRole']}    0tier  1div  2prim  3sec
 // when a user disconnects ...erase from nicknames
 checkSockets = function(id){
 	var dudesname = "";
@@ -52,6 +53,8 @@ checkSockets = function(id){
 		if(nicknames[key] == id){
 			dudesname = key;
 			delete nicknames[key];
+			console.log('deleting '+dudesname+' from the roster');
+			console.log(nicknames);
 		}
 	}
 	return dudesname;
@@ -88,14 +91,14 @@ io.sockets.on('connection', function (socket) {
 		var restricted = false;
 		var clientEmblem_url = emblems[subnickname];
 		var resLevel = 0;
-		console.log(roomName.toUpperCase());
-		console.log(restriction.indexOf(roomName.toUpperCase()));
+		//console.log(roomName.toUpperCase());
+		//console.log(restriction.indexOf(roomName.toUpperCase()));
 		if(restriction.indexOf(roomName.toUpperCase()) != -1){ //if the room name is not on the restricted list
 			for(i in restriction){
 				//console.log(i);
 				if(clientEmblem_url == emblem_links[restriction[i]] ){
 					restricted = true;
-					console.log('restricted!');
+					//console.log('restricted!');
 					break;
 				}
 				resLevel++;
@@ -105,7 +108,7 @@ io.sockets.on('connection', function (socket) {
 		//console.log(mod);
 		if(restricted){
 			var roomResLevel = restriction.indexOf(roomName.toUpperCase());
-			console.log(subnickname+ "'s rank = " + resLevel+' and room rank = '+ roomResLevel + ' mod: '+ mod);
+			//console.log(subnickname+ "'s rank = " + resLevel+' and room rank = '+ roomResLevel + ' mod: '+ mod);
 			if(mod == 'True'){
 				socket.leave(room);
 				var last = room;
@@ -172,26 +175,20 @@ io.sockets.on('connection', function (socket) {
     	//determine room the message client is currently in and only send to that room
     	var name = message.split(":");
     	var name = name[0];
-    	console.log(name + ' is name of client sending message');
+    	console.log(name + ' is name of client sending message ' +message);
     	var roomOfClient = getRoomOfClient(name);
+    	
+    	// make sure the room you're sending to is the room the client is currently in!
     	if(room == roomOfClient){
-	    	//#################################################GET DATE ########################################
-			var objToday = new Date(),
-	        weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
-	        dayOfWeek = weekday[objToday.getDay()],
-	        //domEnder = new Array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ),
-	        dayOfMonth = objToday.getDate(),
-	        months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
-	        curMonth = months[objToday.getMonth()],
-	        curYear = objToday.getFullYear(),
-	        curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
-	        curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
-	        curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
-	        curMeridiem = objToday.getHours() > 12 ? "p.m." : "a.m.";
-			// var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
-			var todays = curMonth+" "+dayOfMonth+", "+curYear+", "+curHour+":"+curMinute+" "+curMeridiem;
+	    	//################GET DATE ############
+			var todays = getNow()
 			message = message+":"+todays;
-			
+			if(info[name] != null && info[name] != []){
+				console.log(info[name]+' isnt null');
+				message = message+':'+info[name][0]+':'+info[name][1]+':'+info[name][2]+':'+info[name][3]; //should be tier:div:prim:sec
+			}else{
+				console.log('info[name] is null?');
+			}
 			//console.log('sending '+emblems[name[0]]);
 			
 	        socket.in(room).send(message);
@@ -220,11 +217,27 @@ io.sockets.on('connection', function (socket) {
     	var req = http.request(options, function(res){
     		res.setEncoding('utf8');
     		res.on('data', function(emblem){
-		    	emblems[name] = emblem;
-		    	//socket.broadcast.to(room).emit('new user', inroom[room],emblems);
+    			// console.log("HWWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+    			//console.log(emblem);
+    			emblemw = emblem.split(":");
+    			emblemw = emblemw[0]+':'+emblemw[1];
+    			infow = emblem.substring(emblemw.length+1);
+    			
+		    	emblems[name] = emblemw;
+		    	
+		    	infow = infow.split(":");
+		    	
+		    	
+		    	info[subnickname] = [];
+		    	info[subnickname][0] = infow[0];
+		    	info[subnickname][1] = infow[1];
+		    	info[subnickname][2] = infow[2];
+		    	info[subnickname][3] = infow[3];
+		    	//console.log(info);
+		    		    	//socket.broadcast.to(room).emit('new user', inroom[room],emblems);
 		    	//socket.emit('new user', nicknames, emblems);
-		    	console.log(room);
-		    	console.log(emblems);
+		    	
+		    	
 		    	io.sockets.in(room).emit('new user', getClientsIn(room),emblems);
 		    	//getClientsIn(room);
     		});
@@ -248,21 +261,41 @@ io.sockets.on('connection', function (socket) {
             res.setEncoding('utf8');
             //Print out error message
             res.on('data', function(message){
-                if(message != 'Everything worked :)'){
-                    console.log('Message: ' + message);
-                }
+                // if(message != 'Everything worked :)'){
+                    // console.log('Message: ' + message);
+                    //info[subnickname] = message;
+                    console.log(info);
+                
             });
         });
         req.write(values);
         req.end();
     });
     
-    socket.on('private message', function(from, msg){
-    	console.log('I received a private message by ', from, ' saying ', msg);
+    
+    
+    
+    socket.on('private message', function(from, msg, fn){
+    	//console.log('I received a private message by ', from, ' saying ', msg);
+    	//io.sockets.socket(socket.id).emit(msg);
+    	var lst = msg.split(" ");
+    	var wandname = lst[0]+' '+lst[1];
+    	var to = getClientId(lst[1]);
+    	var message= msg.substring(wandname.length+1);
+    	console.log('private message to ' + lst[1] +': '+to);
+    	
+    	var g = from+': '+message + ':'+getNow();
+    	io.sockets.socket(to).emit('private', g)
+    	if(lst[1] in nicknames){
+    		fn(true);
+    	}else{
+    		fn(false);
+    	}
     });
     
     socket.on('kick',function(dude){
     	getSocketFromNameAndKick(dude);
+    	console.log('going to kick ' +dude);
     	// socket.socket(dudeSock).emit('kicked');
     });
     
@@ -271,10 +304,10 @@ io.sockets.on('connection', function (socket) {
 		// socket.emit('user disconnected', '')
 
 		var dude = checkSockets(socket.id);
-		socket.broadcast.to(room).emit('new user', nicknames);
+		socket.broadcast.to(room).emit('new user', nicknames, emblems);
 		//socket.emit('new user', nicknames,emblems);
-		socket.emit('user disconnected mother fucker', dude);
-		// socket.disconnect();
+		socket.broadcast.to(room).emit('user disconnected mother fucker', dude);
+		//socket.disconnect();
 		//console.log(nicknames);
 		//disconnect(socket);
 	})
@@ -282,18 +315,49 @@ io.sockets.on('connection', function (socket) {
     
 });
 
+function getNow(){
+	var objToday = new Date(),
+    weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+    dayOfWeek = weekday[objToday.getDay()],
+    //domEnder = new Array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ),
+    dayOfMonth = objToday.getDate(),
+    months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
+    curMonth = months[objToday.getMonth()],
+    curYear = objToday.getFullYear(),
+    curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+    curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+    curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
+    curMeridiem = objToday.getHours() > 12 ? "p.m." : "a.m.";
+	// var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
+	var todays = curMonth+" "+dayOfMonth+", "+curYear+", "+curHour+":"+curMinute+" "+curMeridiem;
+	return todays;
+}
+
+
+function getClientId(name){
+	for(key in nicknames){
+		if(key == name){
+			return nicknames[key]
+		}
+	}
+	return null;
+}
 
 function getClientsIn(room){
 	var clients = io.sockets.clients(room);
 	var clientList = {}
 	//console.log(clients[0]['id']);
 	for(i in clients){
-		
+		var getName = getNickname(clients[i]['id']);
 		//console.log('get nickname ');
-		clientList[getNickname(clients[i]['id'])] = clients[i]['id'];
+		//console.log(!(getName in clientList) && getName != "undefined" && getName != undefined);
+		if(!(getName in clientList) && getName != "undefined" && getName != undefined){
+			clientList[getName] = clients[i]['id'];
+		}
+		
 	}
-	console.log(clientList);
-	console.log('in room '+ room);
+	//console.log(clientList);
+	//console.log('in room '+ room);
 	return clientList;
 	
 }
@@ -319,20 +383,17 @@ function getRoomOfClient(name){
 	var room = {};
 	var roomm = "";
 	room = io.sockets.manager.roomClients[id];
-	console.log(room);
+	//console.log(room);
 	for(key in room){
 		if(key == ''){
-			console.log('not this room');
+			//console.log('not this room');
 		}else{
 			roomm = key.substring(1);
-			console.log(roomm);
+			//console.log(roomm);
 			return roomm;
 		}
 	}
 }
-
-
-
 
 
 

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='content'style="padding-top:140px;" >
+	<div id="box" >
+	{% if user.is_active %}Welcome '{{ user.username }}'
+		{% else %}<a href="/login/">Login</a>{% endif %}
+		
+		
+
+<br />
+<br />
+	{% if userlist %}
+		<h1>Results for user "{{uname}}":</h1>
+		<ul>
+		{% for uzer in userlist %}
+			{% if uzer.verified %}
+			<p><label><a href="/user/{{uzer.ign}}/">{{uzer.ign}} - Rank: {{uzer.tier}} Div: {{uzer.division}}</a></label></p>
+			{% endif %}
+		{% endfor %}
+		</ul>
+	
+		
+	{% else %}
+		<h1>No results found for "{{uname}}"</h1>
+	{% endif %}
+
+
+</div>
+</div>
+{% endblock %}

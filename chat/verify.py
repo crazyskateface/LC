@@ -6,7 +6,9 @@ import json
 
 def ver_ign(ign):
     result =[]
-    
+    verified = False
+    tier = ""
+    division = None
     page = 'https://prod.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+ign+'?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1' 
     
     # page = 'https://54.225.76.249/api/2.0/custom_reports/?nwlat=30.304855&nwlong=-97.771883&selat=30.292196&selong=-97.759105&max_results=2'
@@ -17,6 +19,8 @@ def ver_ign(ign):
     r = requests.get(page,verify=False)
     
     #print(r.text)
+    if r.status_code != 200:
+        return {'verified':None,'tier':tier,'division': division}
     data = json.loads(r.text)
     #print("RESULT:\n")
     #print(r.status_code)
@@ -33,11 +37,13 @@ def ver_ign(ign):
     r = requests.get(page,verify=False)
     
     #print(r.text)
+    if r.status_code != 200:
+        return {'verified':verified,'tier':tier,'division': division}
     data = json.loads(r.text)
     #print("RESULT:\n")
     #print(r.status_code)
     
-    verified = False
+    
     data = data[str(idizzle)]
     pages = data['pages']
     for i in pages:

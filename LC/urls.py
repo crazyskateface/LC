@@ -14,7 +14,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'chat.views.logoutz',  name='logoutz'),
     url(r'^profile/$', 'chat.views.prof', name='prof'),
     url(r'^user/(?P<uname>\w+)/$', 'chat.views.user_prof', name='user_prof'),
-    url(r'^user/(?P<uname>guest-\w+)','chat.views.user_prof',name='user_prof'),
+    url(r'^user/(?P<uname>\d*guest-\w+)','chat.views.user_prof',name='user_prof'),
+    url(r'^search/(?P<uname>\w+)/$', 'chat.views.search', name='search'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^register/$', 'chat.views.register', name='register'),
     url(r'^login/$', 'chat.views.loginz', name='loginz'),
@@ -22,3 +23,6 @@ urlpatterns = patterns('',
     #url("", include('django_socketio.urls')),
     
 )
+
+
+handler404 = 'chat.views.handler404'
