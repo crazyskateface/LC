@@ -1,22 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='content'style="padding-top:140px;" >
-	<div id="box" >
+
+<style type="text/css">
+	
+
+      .form-login {
+      	
+        max-width: 400px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-login .form-login-heading,
+      .form-login .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-login input[type="text"],
+      .form-login input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+</style>
+
+<div class='container'style="padding-top:100px;" >
+	
 {% if user.is_active %}Welcome '{{ user.username }}'
 {% else %}
-<h1>Login: </h1>
-<form id="login_form" method="post" action="/login/">
+
+<form id="login_form" class="form-login" method="post" action="/login/">
             {% csrf_token %}
-            Username: <input type="text" name="username" value="" size="50" />
+            
+            <h2 class="form-login-heading">Login</h2>
+            <span class="text-danger">{{ errors }}</span>
+            <input type="text" class="input-block-level" placeholder="username" name="username" value=""  />
             <br />
-            Password: <input type="password" name="password" value="" size="50" />
+            <input type="password" class="input-block-level" placeholder="password" name="password" value="" />
             <br />
 
-            <input type="submit" value="submit" />
+            <button class="btn btn-large btn-primary" type="submit">Login</button>
+            <br/>
+            {% if input.errors %}<a href="/accounts/password_reset/">Forgot Password?</a>{%else%}{% endif %}
         </form>
         
+
 </div>
-</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
         {% endif %}
 {% endblock %}

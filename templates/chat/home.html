@@ -1,379 +1,122 @@
 {% extends "base.html" %}
 
 {% block content %}
-     <script>
-        	window.onLoad = function(){
-        		
-        	}
-        	var users = [];
-        	var ding = new Audio("{{STATIC_URL}}noti.mp3");
-        	
-        	var emblems;
-        	var name="{{prof.ign}}";
-        	
-        	
-        	
-        	$(document).ready(function(){
-        		
-        		var room="lobby";
-        		var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
-        		var box = document.getElementById('comments');
-        		var ndata = "";
-        		socket.on('connect', function(){
-        			socket.emit('set nickname', '{{prof.ign}}','{{prof.isMod}}');
-        			//socket.emit('joinRoom','lobby');
-        			box.scrollTop = box.scrollHeight;
-        			console.log("connect");
-        			
-        		});
-        		
-        		
-        		
-        		socket.on('new user connected',function(name){
-        			console.log('new user connected to client name: ' + name);
-        			$('#comments').append('<br />'+name+' has connected to the chat!!');
-        			box.scrollTop = box.scrollHeight;
-        		});
-        		var entry_el = $('#comment');
-        		
-        		box.scrollTop = box.scrollHeight;
-        		
-        		
-        		//WHEN USER RECEIVES A MESSAGE FROM NODEJS
-        		socket.on('message', function(message){
-        			//escape html chars
-        			var data = message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-        			
-        			
-        			
-        			
-        			//append message to the bottom of the list
-        			//   root: msg:May 2, 2014, 6:02 PM
-        			ndata = data.split(":");
-        			//ndata[0] is the user name
-        			//root
-        			//msg
-        			//May2, 2014, 6
-        			//02 PM
-        			//BRONZE
-        			//1
-        			//adc
-        			//adc
-        			var cdata = ndata.splice(1,ndata.length-7); 
-        			var date = ndata.splice(1,ndata.length-5);
-        			var tier = ndata[1];
-        			var div = ndata[2];
-        			var prim = ndata[3];
-        			var sec = ndata[4];
-        			
-        			console.log(date);
-        			cdata = cdata.join(":"); //msg
-        			var date = date.join(":");
-        			console.log(emblems);
-        			var emblem = emblems[ndata[0]];  //ndata[0] is name    emblems[name] = bronzeEmblem ie
-        			
-        			var alerted = false;
-        			
-        			if(cdata.match("PJSalt")){
-        				console.log('pissin me off');
-        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a class="infoz" href="/user/'+ndata[0]+'/">'+ndata[0]+'<span>IGN: '+ndata[0]+'<br />Rank: <img src="'+emblem+'"> '+tier+' '+div+'<br />Primary Role: '+prim+'<br />Secondary Role: '+sec+'</span></a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small>' );
-        			}else{
-        				$('#comments').append('<br /><img src="'+emblem+'" height="20" width="20"><strong><a class="infoz" href="/user/'+ndata[0]+'/">'+ndata[0]+'<span>IGN: '+ndata[0]+'<br />Rank: <img src="'+emblem+'"> '+tier+' '+div+'<br />Primary Role: '+prim+'<br />Secondary Role: '+sec+'</span></a></strong>:' +cdata + '<small>'+date+'</small>' );
-        			}
-        			
-        			//window.scrollBy(0, 10000000000);
-        			ding.play();
-  					box.scrollTop = box.scrollHeight;
-        			entry_el.focus();
-        		});
-        		
-        		
-        		
-        		entry_el.keypress(function(event){
-        			//when enter is pressed send input value to node server
-        			if(event.keyCode !=13) return;
-        			var msg = entry_el.attr('value');
-        			if(msg.substring(0,2) == '/w'){
-        				
-        				socket.emit('private message',name, msg,function(data){
-        					
-    						console.log(data);
-        					var lst = msg.split(" ");
-        					var wandname = lst[0]+' '+lst[1];
-        					var ndata = msg.substring(wandname.length);
-        					if(data){
-	        					
-	        					$('#comments').append('<br /><span style="color:pink;"><strong>To: <a href="/user/'+lst[1]+'/" style="color:pink;">'+lst[1]+'</a></strong>:' +ndata +'<small>'+getNow()+'</small></span>' );
-        					}else{
-        						$('#comments').append('<br /><span style="color:pink;">User '+lst[1]+' is not signed in!</span>' );
-        					}
-        					box.scrollTop = box.scrollHeight;
-        				entry_el.focus();
-        				});
-        				console.log('Private message!!! = '+msg);
-        				//clear input value
-        				
-        				entry_el.attr('value', '');
-        			}
-        			else if(msg){
-        				socket.emit('send_message', msg, function(data){
-        					console.log(data);
-        				});
-        				
-        				//clear input value
-        				entry_el.attr('value', '');
-        			}
-        		});
-        		
-        		
-        		socket.on('new user', function(users,emblems_fromNode){
-        			emblems = emblems_fromNode;
-        			$("#users").empty();
-        			console.log('changing users list to room '+room);
-        			$('#users').append('<h4>'+room+'</h4>');
-        			$('#users').append('Users:');
-        			for(var user in users){
-        				console.log(user+' joined');
-        				
-        				$('#users').append('<br /><a href="/user/'+user+'/">'+user+'</a> ');                                   //add emblem
-        			}
-        		});
-        		
-        		socket.on('user disconnected mother fucker', function(dude){
-        			$('#comments').append('<br />'+dude+' disconnected! ...that loser.');
-        			console.log(dude+' disconnected');
-        		});
-        		var kickButton = document.getElementById("kick");
-        		if(kickButton != null){
-        			kickButton.onclick = function () {                         // add dude name in params for buttons
-	        			var dudek = $("#kickbox").val();
-	        			socket.emit('kick', dudek);
-	        		};
-	        	};
-	        	
-	        	socket.on("alert",function(message){
-	        		alert(message);
-	        		alerted = true;
-	        	});
-	        	
-        		socket.on('kicked', function(){
-        			socket.disconnect()
-        			alert("You've been kicked!!!");
-        			window.location = "/logout/";
-        		});
-        		socket.on('banned', function(ip){
-        			//socket.disconnect();
-        			//alert("You're banned! "+ip);
-        			//window.location = "/";
-        		})
-        		
-        		
-        		
-        		$("#rooms").on('change', function(){
-        			var thisval = this.value;
-        			alert('Changing to room:' + thisval);
-        			socket.emit('joinRoom', thisval, function (data) {
-				      if(data){
-				      	room = thisval;
-				      	$("#comments").empty();
-	        			$("#comments").append('You have entered the '+thisval+' room!');
-	        			box.scrollTop = box.scrollHeight;
-	        			// $("#comments").append('<div class="row" style="bottom:0;position:absolute;width:100%;"><div class="col-md-12" ><input type="text" class="form-control input-sm" id="comment" name="comment" style="float:left;margin-left:-15px;width:104%;background-color:white;"/></div></div>');
-	        			// entry_el = $("#comment");
-	        			entry_el.focus();
-	        			changeUsersListDammit(thisval);
-	        			
-				      }else{
-				      	$('#rooms').val(room);
-				      }
-				    });	
-        			
-        			
-        			function changeUsersListDammit(room){
-        				var parent = $("#users");
-        				$("h4", parent).text(room);
-        			}
-        			//window.location = '/room/'+this.value+'/';
-        		});
-        		
-        		
-        		socket.on('private',function(message){
-        			
-        			//escape html chars
-        			var data = message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-        			
-        			//data = 0 from  1 message
-        			
-        			ndata = data.split(":");
-        			var cdata = ndata.splice(1,ndata.length-3);
-        			var date = ndata.splice(ndata.length-2,ndata.length);
-        			console.log(date);
-        			cdata = cdata.join(":"); //msg
-        			var date = date.join(":");
-        			var emblem = emblems[ndata[0]];  //ndata[0] is name    emblems[name] = bronzeEmblem ie
-        			var alerted = false;
-        			
-        			if(cdata.match("PJSalt")){
-        				console.log('pissin me off');
-        				$('#comments').append('<br /><span style="color:pink;"><img src="'+emblem+'" height="20" width="20"><strong>From <a href="/user/'+ndata[0]+'/" style="color:pink;">'+ndata[0]+'</a></strong>:' +'<img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>'+date+'</small></span>' );
-        			}else{
-        				$('#comments').append('<br /><span style="color:pink;"><img src="'+emblem+'" height="20" width="20"><strong>From <a href="/user/'+ndata[0]+'/" style="color:pink;">'+ndata[0]+'</a></strong>:' +cdata + '<small>'+date+'</small></span>' );
-        			}
-        			
-        			//window.scrollBy(0, 10000000000);
-        			ding.play();
-  					box.scrollTop = box.scrollHeight;
-        			entry_el.focus();
-        		});
-        		
-        		
-        		
-        		//###############END SOCKET DESIGN
-        		
-        		function getNow(){
-					var objToday = new Date(),
-				    weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
-				    dayOfWeek = weekday[objToday.getDay()],
-				    //domEnder = new Array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ),
-				    dayOfMonth = objToday.getDate(),
-				    months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
-				    curMonth = months[objToday.getMonth()],
-				    curYear = objToday.getFullYear(),
-				    curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
-				    curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
-				    curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
-				    curMeridiem = objToday.getHours() > 12 ? "p.m." : "a.m.";
-					// var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
-					var todays = curMonth+" "+dayOfMonth+", "+curYear+", "+curHour+":"+curMinute+" "+curMeridiem;
-					return todays;
-				}
-        		
-        		
-        		
-        		window.onload = function(){
-        			$("#comments").append('Welcome to the lobby '+name+'!');
-        		}
-        		
-        		window.addEventListener('beforeunload',function(event){
-        			//socket.disconnect();
-        		});
-        		
-        		
-        	});
-        </script>
-    <br />
-    <br />
-    
-    <div class="container" >
-    
-  
-    <div id="box" class="row" style="height:400px;background-color:white;"> <!--  border-width: 10px; border-style:inset; border-color:#fffffa; -->
-    <div  class="col-md-8" >
-    	<!--
-    	{% for comment in comments %}
-    		{% if comment.text == "PJSalt" %}
-    		
-    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><strong><a href="/user/{{comment.user}}/">{{comment.user}}</strong></a>: <img src="http://www.ilest4h.fr/files/faces/PJSalt.png"><small>{{comment.datetime}}</small>
-    		{% else %}
-    		<br /><img src="http://i.imgur.com/Milbonj.png" height="20" width="20"><strong><a href="/user/{{comment.user}}/">{{comment.user}}</strong></a>: {{comment.text}} <small>{{comment.datetime}}</small>
-    		{% endif %}
-    	{% endfor %}
-    	-->
-    	<div class="row" >
-    		<div class="col-md-12">
-    			<div id="comments" style="overflow:scroll;background-color:white;height:370px;float:left;margin-left:-15px;width:104%;box-shadow:inset 0px 2px 5px 0px #888;">
-    				
-    			</div>
-    		</div>
-    	</div>
-    	<div class="row" style="bottom:-18;position:absolute;width:100%;">
-     		<div class="col-md-12" >
-	    	<input type="text" placeholder="Chat now!  PM: /w <name> <msg>" class="form-control input-sm" id="comment" name="comment" style="float:left;margin-left:-15px;width:104%;background-color:white;"/>
-	    	<!-- <input type="button" id="soundBtn" value="&#128266;" style="border-style:outset;" onClick=''/> -->
-	    	</div>
-    	</div>
-    </div>
-    	
-    
-    
-    <!-- USERS      -->
-    <div id="lobby" style="box-shadow:inset 0px 2px 5px 0px #888;height:400px;background-color:white;"class="col-md-2">
-    	
-    	<ul id="users">Users:</ul>
-    </div>
-    
-    {% if prof.isMod %}
-    <div id="modbox" style="box-shadow:inset 0px 2px 5px 0px #888;height:400px;background-color:white" class="col-md-2">
-    	<br />
-    	<input class="form-control input-sm" type="text" value="" id="kickbox" /><button id="kick" type="button">Kick</button>
-    </div>
-    {% else %}{% endif %}
-    
-    
-    <!-- rooms: 'lobby','duos','teams','bronze','silver','gold','platinum','diamond','challenger' -->
-    <br />
-    <div class="col-md-12" style="width:102.5%;float:left;margin-left:-15px;margin-top:10px">
-    <select id='rooms' class="form-control">
-    	<option value='lobby' selected>lobby</option>
-    	<option value='duos'>duos</option>
-    	<option value='teams'>teams</option>
-    	<option value='bronze'>bronze</option>
-    	<option value='silver'>silver</option>
-    	<option value='gold'>gold</option>
-    	<option value='platinum'>platinum</option>
-    	<option value='diamond'>diamond</option>
-    	<option value='challenger'>challenger</option>
-    	
-    </select>
-    </div>
-    <!-- <div class="col-md-2">
-    	<span><input type="button" value="mute" /> <input type="button" value="unmute" /></span>
-    </div> -->
-    
-    </div>
-    
-    </div><!-- container end -->
-    <br />
-    <br />
-    <br />
-    
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-      <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-     <br />
-    <br />
-    <br />
-  
- 
-{% endblock %}
 
+<style type="text/css">
+	/* Carousel base class */
+#footer{
+	position:static;
+}
+
+.carousel {
+  height: 500px;
+  margin-bottom: 60px;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+  height: 500px;
+  background-color: #777;
+}
+.carousel-inner > .item > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  height: 500px;
+}
+</style>
+
+<div class="container-fluid">
+<!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="http://blairvonf.files.wordpress.com/2012/10/rift_1-1_turret1.jpg" alt="First slide" style="opacity:0.8;">
+          <div class="container">
+            <div class="carousel-caption" style="background-color:rgba(150,150,150,0);width:100%;left:0;">
+              <h1>LEAGUEchat</h1>
+              <p>The BEST place to find teammates for battle in summoner's rift.</p>
+              <p><a class="btn btn-lg btn-primary" href="register" role="button">Sign up today</a></p>
+              <br />
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="{{STATIC_URL}}team-work-op.png" alt="yup">
+          <div class="container">
+            <div class="carousel-caption" style="background-color:rgba(130,130,130,.5);">
+              <h1>The image says it all.</h1>
+              <p>Get connected with a team today.</p>
+              <p><a class="btn btn-lg btn-primary" href="/register/" role="button">Sign up today</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img data-src="holder.js/900x500/auto/#555:#5a5a5a/text:Third slide" alt="Third slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>One more for good measure.</h1>
+              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div><!-- /.carousel -->
+
+
+
+<br />
+  <div class="container marketing">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4" style="color:#DDDDDD;">
+          <img class="img-circle" height="140" width="140" src="{{STATIC_URL}}teemoLook.png" alt="Find players!">
+          <h2>I'll scout ahead</h2>
+          <p>LEAGUEchat makes it easy to find other players to learn from and to play with. Bringing together players of the same caliber and of more skill to help new players.</p>
+          <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4" style="color:#DDDDDD;">
+          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
+          <h2>Teams all day</h2>
+          <p>LEAGUEchat makes it easy for players to find teams. We have specific chat rooms to find players of similar skill level. Finding a group to play with has never been easier.</p>
+          <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4" style="color:#DDDDDD;">
+          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
+          <h2>Duo Partners</h2>
+          <p>LEAGUEchat brings together duo partners of similar caliber to take on the rift. Sometimes going at it alone can be fearful, but with a friend ranked fear can drift away.</p>
+          <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+  </div>
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+{% endblock %}

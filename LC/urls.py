@@ -6,6 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'chat.views.home', name='home'),
+    url(r'^chat/$', 'chat.views.chat', name='chat'),
     url(r'^room/(?P<room>\w+)/$','chat.views.room', name='room'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^node_api$', 'chat.views.node_api', name='node_api'),
@@ -20,6 +21,9 @@ urlpatterns = patterns('',
     url(r'^register/$', 'chat.views.register', name='register'),
     url(r'^login/$', 'chat.views.loginz', name='loginz'),
     url(r'^verify/(?P<ign>\w+)/$', 'chat.views.verify', name='verify'),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^training/$','chat.views.training',name='training'),
+    url(r'^leaderboard/$', 'chat.views.leaderboard', name='leaderboard'),
     #url("", include('django_socketio.urls')),
     
 )

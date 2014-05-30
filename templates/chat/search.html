@@ -1,21 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='content'style="padding-top:140px;" >
-	<div id="box" >
-	{% if user.is_active %}Welcome '{{ user.username }}'
-		{% else %}<a href="/login/">Login</a>{% endif %}
-		
-		
 
-<br />
-<br />
+<style type="text/css">
+	
+	  .results{
+	  	max-width: 800px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	  }
+      .results .results-heading{
+        margin-bottom: 10px;
+      }
+      
+</style>
+
+
+<div class='container'style="padding-top:100px" >
+
+	<div class="results" style="background-color:white;">
+
 	{% if userlist %}
-		<h1>Results for user "{{uname}}":</h1>
+		<h2 class="results-heading">Results for user "{{uname}}":</h1>
 		<ul>
 		{% for uzer in userlist %}
 			{% if uzer.verified %}
-			<p><label><a href="/user/{{uzer.ign}}/">{{uzer.ign}} - Rank: {{uzer.tier}} Div: {{uzer.division}}</a></label></p>
+			<p><pre><label><a href="/user/{{uzer.ign}}/">{{uzer.ign}} - Rank: {{uzer.tier}} Div: {{uzer.division}}</a></label></pre></p>
 			{% endif %}
 		{% endfor %}
 		</ul>
@@ -25,7 +43,27 @@
 		<h1>No results found for "{{uname}}"</h1>
 	{% endif %}
 
+</div>
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
-</div>
-</div>
+
 {% endblock %}

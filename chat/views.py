@@ -10,21 +10,31 @@ from operator import attrgetter
 from chat.forms import  UserProfileForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, REDIRECT_FIELD_NAME, logout
-
+from tasks import add
 
 import redis
 
 
 rooms = ['lobby', 'duos']
 
-@login_required(login_url="/login/")
+
 def home(request):
-    prof = UserProfile.objects.get(user=request.user)
+    #prof = UserProfile.objects.get(user=request.user)
     
+    #comments = Comments.objects.select_related().all().order_by('-datetime')[:100]
+    #comments = sorted(comments,key=attrgetter('datetime'))
+    
+    return render(request, 'chat/home.html', locals())
+
+@login_required(login_url="/login/")
+def chat(request):
+    prof = UserProfile.objects.get(user=request.user)
+    chat = True
     comments = Comments.objects.select_related().all().order_by('-datetime')[:100]
     comments = sorted(comments,key=attrgetter('datetime'))
     
-    return render(request, 'chat/home.html', locals())
+    return render(request, 'chat/chat.html', locals())
+
 
 def room(request, room):
     if room not in rooms:
@@ -64,6 +74,9 @@ def verify(request, ign):
             prof.division = divisions[div]
         
     prof.save()
+    result = add.delay(4,4 )
+    print(result)
+    print(result.backend)
     return render(request, 'chat/profile.html', locals())
 
 
@@ -174,6 +187,8 @@ def user_prof(request, uname):
 # CREATE USER PROFILE BRUH
 def register(request):
     context = RequestContext(request)
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/chat/")
     
     
     registered = False
@@ -248,8 +263,8 @@ def loginz(request):
             
         else:
             # bad login creds
-            print "Invalid login creds: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid shit balls")
+            errors = "invalid login credentials"
+            return render_to_response('chat/login.html',{'errors':errors}, context)
     else:
         return render_to_response('chat/login.html', {}, context)
     
@@ -258,22 +273,20 @@ def logoutz(request):
     logout(request)
     
     return HttpResponseRedirect('/login/')
+
+
+
+def training(request):
+    return render("chat/training.html", {}, RequestContext(request))
+
+def leaderboard(request):
+    return render("chat/leaderboard.html", {}, RequestContext(request))
     
     
 def handler404(request):
     return render(request, '404.html')
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
 
 

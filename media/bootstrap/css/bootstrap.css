@@ -13,21 +13,60 @@ html {
 }
 body {
   margin: 0;
+  height:100%;
+  /*margin-bottom: 400px;*/
+}
+
+#footer {
+  clear:both;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 200px;
+  background-color: #000000;
+  padding-top:30px;
+  
+}
+
+ul.simple-menu{
+	text-align: center;
+	/*font-size: .66667em;*/
+	list-style: none;
+	list-style-type: disc;
+	
+	padding: 0;
+}
+
+ul.simple-menu li{
+	display:inline;
+}
+ul.simple-menu li:after{
+	content:" | ";
+	display:inline;
+}
+ul.simple-menu li:last-child:after{
+	display:none;
+}
+
+ul.simple-menu a{
+	text-decoration:none;
+	margin:0 6px;
 }
 
 a.infoz{
-    position:relative; /*this is the key*/
+    position:visible; /*this is the key*/
     z-index:24; 
     text-decoration:none}
 
-a.infoz:hover{z-index:25; background-color:#ff0}
+a.infoz:hover{z-index:25; background-color:#0ef}
 
 a.infoz span{display: none}
 
 a.infoz:hover span{ /*the span will display just on :hover state*/
     display:block;
     position:absolute;
-    top:2em; left:2em; width:15em;
+    top:0em; right:5em; width:15em;
     border:1px solid #0cf;
     background-color:#3A3A3A; color:#fff;
     text-align: center
@@ -40,14 +79,17 @@ a.infoz:hover span{ /*the span will display just on :hover state*/
 /*.content{
     padding:90px 0px 10% 15%;
 }*/
-/*#box {
-	float:left; overflow:auto; height:410px; width:60%; padding:0px 0px 0px 0px;box-shadow:inset 0px 5px 10px 0px #888;background-color:white;
+#box {
+	/*float:left; overflow:auto; height:410px; width:60%; padding:0px 0px 0px 0px;box-shadow:inset 0px 5px 10px 0px #888;background-color:white;*/
 	word-wrap:break-word;
+	border-radius:6px;
 	
-}*/
+}
 #comments{
 	font-family:Arial;
 	overflow:scroll;
+	
+	border-radius:6px;
 }
 #comment{
 	float:left;position:relative;bottom:0; width:95%;box-shadow:inset 0px 1px 2px 0px #888;
@@ -62,6 +104,7 @@ nav div ul li .form-control{
   color:#fff;
   
 }
+
 
 article,
 aside,

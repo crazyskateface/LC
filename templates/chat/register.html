@@ -30,7 +30,7 @@
         padding: 7px 9px;
       }
 </style>
-<div class="container">
+<div class="container" style="padding-top:100px;">
 {% if user.is_active %}Welcome '{{ user.username }}'
 {% else %}
 
@@ -39,7 +39,7 @@
 	{% csrf_token %}
 	<h2 class="form-signup-heading">Sign up</h2>
 	{% for input in user_form %}
-	{{input.errors}}
+	{% if input.errors %}<span class="text-danger">{{input.name}}: {{input.errors}}</span>{% else %}{% endif %}
 	{% endfor %}
 	<input id="id_username" class="input-block-level" maxlength="30" name="username" type="text" placeholder="username" /> 
 	<input id="id_password1" class="input-block-level" name="password1" type="password" placeholder="password" />
@@ -51,11 +51,29 @@
 	
 	
 	
+	
 </form>
 
 
 
 </div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
 
 

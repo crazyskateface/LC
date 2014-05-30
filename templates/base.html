@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>League Chat</title>
+        <title>LEAGUEchat</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+        <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
         <script src="{{STATIC_URL}}socket.io.js"></script> <!-- http://ec2-54-86-25-186.compute-1.amazonaws.com:4000 -->
         <!--<link rel="stylesheet" href="{{MEDIA_URL}}style.css" type="text/css" media="screen, projection" /> -->
         <link href="{{MEDIA_URL}}bootstrap/css/bootstrap.css" rel="stylesheet">
+        <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico" type="image/x-icon">
+        <link rel="icon" href="{{STATIC_URL}}favicon.ico" type="image/x-icon">
         
        <script type="text/javascript">
        	$(function() {  
@@ -70,12 +74,21 @@
     		</div>
     		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		    	<ul class="nav navbar-nav">
-		    		<li><a href="/">home</a></li>
-		    		<li><a href="/">chat</a></li>
-		    		<li><a href="/profile/">profile</a></li>
-		    		<li><a href="/">contact</a></li>
-		    		<li><a href="/">duuuude</a></li>
-		    		<li class="nuts"><input class="form-control" id='searchAndDiscover' type='search' placeholder='search users' /></li>
+		    		{% if chat %}
+		    		<li>nuts</li>
+		    		<li><a href="/" target="_blank">home</a></li>
+		    		<li><a href="#" >chat</a></li>
+		    		<li><a href="/profile/" target="_blank" >profile</a></li>
+		    		<li><a href="#" target="_blank">training</a></li>
+		    		<li><a href="#" target="_blank">leaderboard</a></li>
+		    		{% else %}
+		    		<li><a href="/" >home</a></li>
+		    		<li><a href="/chat/" >chat</a></li>
+		    		<li><a href="/profile/" >profile</a></li>
+		    		<li><a href="#" >training</a></li>
+		    		<li><a href="#" >leaderboard</a></li>
+		    		{% endif %}
+		    		<li class="nuts" ><input class="form-control" id='searchAndDiscover' type='search' placeholder='search users' /></li>
 		    		
 		    	</ul>
 		    	<ul class="nav navbar-nav navbar-right">
@@ -92,6 +105,35 @@
     	
     	
     {% block content %}{% endblock %}
+    
+    
+   
+   
+    <div id="footer">
+      <div class="container">
+      	<div class="row">
+      		<div class="col-md-2">
+      			
+      			<img src="{{STATIC_URL}}purple_min.png" height="75%" width="75%" alt="Made possible by crazyskateface" >
+      		</div>
+      		<div class="col-md-8">
+      			<ul class="simple-menu">
+      				<li><a title class href="#">Become a Mod</a></li>
+      				<li><a href="#">Contact</a></li>
+      				<li><a href="#">Synergy</a></li>
+      				
+      			
+      		
+      				<li><a href="#">Wes come up</a></li>
+      				<li><a href="#">With more links</a></li>
+      				<li><a href="#">jobs</a></li>
+      			</ul>
+      		</div>
+      	</div>
+        
+      </div>
+    </div>
+    
     
     
     <script src="{{MEDIA_URL}}bootstrap/js/bootstrap.min.js"></script>

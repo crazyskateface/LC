@@ -54,6 +54,8 @@ checkSockets = function(id){
 			dudesname = key;
 			delete nicknames[key];
 			console.log('deleting '+dudesname+' from the roster');
+			delete emblems[key];
+			delete info[key];
 			console.log(nicknames);
 		}
 	}
@@ -394,6 +396,13 @@ function getRoomOfClient(name){
 		}
 	}
 }
+
+
+
+
+
+
+
 
 
 
