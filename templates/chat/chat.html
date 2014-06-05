@@ -13,7 +13,7 @@
 			 			 //'[]':'<a href="#" class="infoz"><span><img src=""></span></a>'
 
 			};
-        	
+        	var current_scroll = 0;
         	
         	
         	$(document).ready(function(){
@@ -42,6 +42,7 @@
         		var entry_el = $('#comment');
         		
         		box.scrollTop = box.scrollHeight;
+        		current_scroll = box.scrollHeight;
         		
         		
         		//WHEN USER RECEIVES A MESSAGE FROM NODEJS
@@ -86,7 +87,12 @@
         			//window.scrollBy(0, 10000000000);
         			//ding.volume = 0.0;
         			ding.play();
-  					box.scrollTop = box.scrollHeight;
+        			console.log(current_scroll);
+        			console.log(box.scrollHeight);
+        			if (current_scroll > (box.scrollHeight -380)){
+        				box.scrollTop = box.scrollHeight;
+        			}
+  					
         			entry_el.focus();
         		});
         		
@@ -326,6 +332,15 @@
 				 	});
 				 });
 				 
+				 document.getElementById('comments').addEventListener('scroll',function(){
+    
+				    current_scroll = this.scrollTop;
+				    console.log('current_scroll '+ current_scroll.toString());
+				    console.log('scrollTop '+this.scrollTop.toString());
+				    console.log('heigh '+ this.scrollHeight.toString());
+				    
+				    
+				 });		
 				 
 				 
         		

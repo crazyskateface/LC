@@ -17,16 +17,28 @@ body {
   /*margin-bottom: 400px;*/
 }
 
-#footer {
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -200px; /* the bottom margin is the negative value of the footer's height */
+}
+
+
+footer {
   clear:both;
   position: relative;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 200px;
+  height: 220px;
   background-color: #000000;
   padding-top:30px;
   
+}
+
+footer, .push{
+	height:225px;
 }
 
 ul.simple-menu{

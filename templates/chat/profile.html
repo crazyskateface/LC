@@ -9,6 +9,15 @@
 		}
 	}
 	$(document).ready(function(){
+		
+		{% if prof.verified %}
+			var verified = true;
+			
+		{% else %}
+			var verified = false;
+		{% endif %}
+		
+		
 		var roles = ['adc','support','jungle','top','mid'];
 		console.log("{{prof.primRole}} and "+ roles.indexOf("{{prof.primRole}}"));
 		$('#id_primRole').val(roles.indexOf("{{prof.primRole}}")+1);
@@ -27,6 +36,32 @@
 			});
 		});
 		
+		
+		$("#tabs li").click(function() {
+		//	First remove class "active" from currently active tab
+			$("#tabs li").removeClass('active');
+	
+			//	Now add class "active" to the selected/clicked tab
+			$(this).addClass("active");
+	
+			//	Hide all tab content
+			$(".tab_content").hide();
+	
+			//	Here we get the href value of the selected tab
+			var selected_tab = $(this).find("a").attr("href");
+	
+			//	Show the selected tab content
+			$(selected_tab).fadeIn();
+	
+			//	At the end, we add return false so that the click on the link is not executed
+			return false;
+		});
+		
+		
+		if(verified ==false){
+			console.log(verified);
+			$("#atab2").click();
+		}
 		
 	});
 </script>
@@ -63,6 +98,73 @@
       	color:#000;
       	padding: 10px;
       }
+      /*                           TABS                      */
+     #tabs_wrapper {
+		/*width: 422px;*/
+	}
+	#tabs_container {
+		/*border-bottom: 1px solid #ccc;*/
+	}
+	#tabs {
+		list-style: none;
+		padding: 5px 0 4px 0;
+		/*margin: 0 0 0 10px;*/
+		font: 0.75em arial;
+	}
+	#tabs li {
+		display: inline;
+		width:40px;
+	}
+	#tabs li a {
+		border: 1px solid #ccc;
+		padding: 4px 6px;
+		text-decoration: none;
+		background-color: #eeeeee;
+		border-bottom: none;
+		outline: none;
+		border-radius: 5px 5px 0 0;
+		-moz-border-radius: 5px 5px 0 0;
+		-webkit-border-top-left-radius: 5px;
+		-webkit-border-top-right-radius: 5px;
+		width:20em;
+	}
+	#tabs li a:hover {
+		background-color: #dddddd;
+		padding: 4px 6px;
+	}
+	#tabs li.active a {
+		border-bottom: 1px solid #fff;
+		background-color: #fff;
+		padding: 4px 6px 5px 6px;
+		border-bottom: none;
+	}
+	#tabs li.active a:hover {
+		background-color: #eeeeee;
+		padding: 4px 6px 5px 6px;
+		border-bottom: none;
+	}
+	
+	#tabs li a.icon_accept {
+		background-image: url(accept.png);
+		background-position: 5px;
+		background-repeat: no-repeat;
+		padding-left: 24px;
+	}
+	#tabs li a.icon_accept:hover {
+		padding-left: 24px;
+	}
+	
+	#tabs_content_container {
+		/*border: 1px solid #ccc;*/
+		padding-top:20px;
+		border-top: none;
+		padding: 10px;
+		width: 400px;
+	}
+	.tab_content {
+		display: none;
+	}
+
 </style>
 
 
@@ -74,66 +176,116 @@
 	
 	
 	
-	<br />
-	<br />
-	{% if prof.verified %}
-	<form class="form-update" id="update_form" method="post" action="/profile/">
-		{% csrf_token %}
-		<h2 class="form-update-heading">Profile:</h2>
-		
-		{{prof_form.errors}}
-		{% if nice == True %}
-		<span style="color:#00cc22">Successfully updated!</span><br />
-		{% endif %}
-		<label>Ign:</label> <input type="text" class="input-block-level" id="id_ign" name="ign" value="{{prof.ign}}" /><br />
-		
-		<label>Rank: </label> {{prof.tier}} <br />
-		<label>Division: </label> {{prof.division}} <br />
-		
-		<label>Primary Role:</label><select id='id_primRole' name="primRole" class="input-block-level">
-			<option value="1">adc</option>
-			<option value="2">support</option>
-			<option value="3">jungle</option>
-			<option value="4">top</option>
-			<option value="5">mid</option>
-		</select> <br />
-		<label>Second  Role:</label><select id='id_secRole' name="secRole" class="input-block-level">
-			<option value="1">adc</option>
-			<option value="2">support</option>
-			<option value="3">jungle</option>
-			<option value="4">top</option>
-			<option value="5">mid</option>
-		</select> <br />
-		<button class="btn btn-large btn-primary" type="submit">Update</button>
-	</form>
-	
-	{% else %}
-	<br /> <h4>Verify your account:</h4>
-	<code>To verify: 'Change a mastery page to your summoner name. 
-		<br /> example:  Summoner 'Adriatticus'  mastery page name: 'Adriatticus' (any page)
-		<br /> and then Type that name here and click Verify. <strong>NO SPACES</strong></code>
-	<br />
-	<br />
-	<label style="color:white;">IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
-	<br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% elif contents %}<span class='error' style="color:red;">That user already verified!</span>{% elif finders %}<span class='error' style="color:red;">LoL user not found!</span>{% else %}{% endif %}
-	
-	<br />
-	<br />
-	<br />
-	<br />
-	<pre class="text-warning"><span style="font-size:x-large;">You <span style="font-size:xx-large;">MUST</span> change it back immediately afterwards!!</span></pre>
 	
 	
+<div class="row" style="background-color:white;height:410px;"> <!-- row -->
+	
+	<div class="col-md-2">
+		<h4>{{prof.user}}</h4>
+		<img src="{{STATIC_URL}}teemo.jpg" height="100" width="100">
+	</div>
+	<div class="col-md-10" style="padding-top:15px;">
+		<!-- tabs -->
+		<div id="tabs_container">
+			<ul id="tabs">
+				<li class="active" style="width:40px;"><a id="atab1" href="#tab1">Profile</a></li>
+				<li><a id="atab2" href="#tab2">Verify</a></li>
+				<li><a id="atab3" href="#tab3">Account</a></li>
+			</ul>
+		</div>
+		<div id="tabs_content_container">
+			<div id="tab1" class="tab_content" style="display: block;">
+				<!-- profile -->
+				
+				
+				
+				{% if prof.verified %}
+				    <form class="form-update" id="update_form" method="post" action="/profile/">
+				        {% csrf_token %}
+				        <h2 class="form-update-heading">Profile:</h2>
+				        
+				        {{prof_form.errors}}
+				        {% if nice == True %}
+				        <span style="color:#00cc22">Successfully updated!</span><br />
+				        {% endif %}
+				        <label>Ign:</label> <input type="text" class="input-block-level" id="id_ign" name="ign" value="{{prof.ign}}" /><br />
+				        
+				        <label>Rank: </label> {{prof.tier}} <br />
+				        <label>Division: </label> {{prof.division}} <br />
+				        
+				        <label>Primary Role:</label><select id='id_primRole' name="primRole" class="input-block-level">
+				            <option value="1">adc</option>
+				            <option value="2">support</option>
+				            <option value="3">jungle</option>
+				            <option value="4">top</option>
+				            <option value="5">mid</option>
+				        </select> <br />
+				        <label>Second  Role:</label><select id='id_secRole' name="secRole" class="input-block-level">
+				            <option value="1">adc</option>
+				            <option value="2">support</option>
+				            <option value="3">jungle</option>
+				            <option value="4">top</option>
+				            <option value="5">mid</option>
+				        </select> <br />
+				        <button class="btn btn-large btn-primary" type="submit">Update</button>
+				    </form>
+				    
+				    
+				    
+				 {% endif %}
+				
+				
+			</div>
+			<div id="tab2" class="tab_content">
+				<!-- Verify -->
+				{% if prof.verified %}
+				<h4>You are already verified!</h4>
+				<br />
+				Update? 
+				
+				{% else %}
+				<h4>Verify your account:</h4>
+				    <code>To verify: 'Change a mastery page to your summoner name. 
+				        <br /> example:  Summoner 'Adriatticus'  mastery page name: 'Adriatticus' (any page)
+				        <br /> and then Type that name here and click Verify. <strong>NO SPACES</strong></code>
+				    <br />
+				    <br />
+				    <label style="color:white;">IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
+				    <br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% elif contents %}<span class='error' style="color:red;">That user already verified!</span>{% elif finders %}<span class='error' style="color:red;">LoL user not found!</span>{% else %}{% endif %}
+				    
+				    <br />
+				    <br />
+				    <br />
+				    <br />
+				    <pre class="text-warning"><span style="font-size:x-large;">You <span style="font-size:xx-large;">MUST</span> change it back immediately afterwards!!</span></pre>
+				    
+    			{% endif %}
 
-{% endif %}
-<br />
-	<!-- <div class="account" id="account" style="background-color:white;" > -->
-		<a href="#" id="acc-link"><h4 >Account</h4></a>
-		<div id="account-hide">
-			<br />
-			<a href="/accounts/password_change/">Change Password</a>
-		<!-- </div> -->
-		</div> 
+				
+				
+				
+			</div>
+			<div id="tab3" class="tab_content">
+				<!-- Account -->
+				<!-- <div class="account" id="account" style="background-color:white;" > -->
+		       <!-- <a href="#" id="acc-link"><h4 >Account</h4></a>
+		        <div id="account-hide">
+		            <br /> -->
+		            <a href="/accounts/password_change/">Change Password</a>
+		        <!-- </div> -->
+		        <!-- </div> -->
+				
+				
+				
+			</div>
+		</div>
+		<!-- end tabs -->
+
+	</div>
+	
+</div> <!-- end row -->
+	
+	
 	
 	
 </div>

@@ -30,6 +30,10 @@
         margin-bottom: 15px;
         padding: 7px 9px;
       }
+      .btn-twitch{
+      	background-color:#63469C;
+      	color:white;
+      }
 </style>
 
 <div class='container'style="padding-top:100px;" >
@@ -50,6 +54,10 @@
             <button class="btn btn-large btn-primary" type="submit">Login</button>
             <br/>
             {% if input.errors %}<a href="/accounts/password_reset/">Forgot Password?</a>{%else%}{% endif %}
+            <br />
+            <h3>or</h3>
+            <br />
+            <a href="https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=iqme1phzcvouk0zuvo68pob2fghzwf1&redirect_uri=http://ec2-54-86-25-186.compute-1.amazonaws.com/twitchAuth&scope=user_read" class="btn btn-large btn-twitch">Log in with <img src="http://www.dafont.com/forum/attach/orig/1/3/134049.png" height="30"></a>
         </form>
         
 

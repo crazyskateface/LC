@@ -39,8 +39,7 @@
     				entry_search.attr('value', '');
     			}
     		});
-		
-		
+    		
 		});
 		
 		$(window).resize(function(){  
@@ -103,13 +102,13 @@
     	</div>
     </nav>
     	
-    	
+   	<div class="wrapper">
     {% block content %}{% endblock %}
     
-    
+    <div class="push"></div>
+   </div>
    
-   
-    <div id="footer">
+    <footer>
       <div class="container">
       	<div class="row">
       		<div class="col-md-2">
@@ -118,21 +117,30 @@
       		</div>
       		<div class="col-md-8">
       			<ul class="simple-menu">
+      				{% if chat %}
+      				<li><a title class href="/mod/" target="_blank">Become a Mod</a></li>
+      				<li><a href="/contact/" target="_blank">Contact</a></li>
+      				<li><a href="/synergy/" target="_blank">Synergy</a></li>
+      				<li><a href="/terms/" target="_blank">TOS</a></li>
+      				<li><a href="/privacy/" target="_blank">Privacy Policy</a></li>
+      				<li><a href="/jobs/" target="_blank">jobs</a></li>
+      				{% else %}
       				<li><a title class href="#">Become a Mod</a></li>
       				<li><a href="#">Contact</a></li>
       				<li><a href="#">Synergy</a></li>
-      				
-      			
-      		
-      				<li><a href="#">Wes come up</a></li>
-      				<li><a href="#">With more links</a></li>
+      				<li><a href="/terms/">TOS</a></li>
+      				<li><a href="/privacy/">Privacy Policy</a></li>
       				<li><a href="#">jobs</a></li>
+      				{% endif %}
       			</ul>
+      		</div>
+      		<div class="col-md-2" style="padding-top:80px;width:120px;">
+      				<a href="https://www.facebook.com/theLEAGUEchat"><img src="{{STATIC_URL}}FB-f-Logo__blue_29.png" height="40" width="40" style="float:left;margin-left:0;" ></a><a href="https://twitter.com/theLEAGUEchat"><img src="{{STATIC_URL}}Twitter_logo_blue.png" height="40" width="40" style="float:right;margin-right:0;"></a>
       		</div>
       	</div>
         
       </div>
-    </div>
+    </footer>
     
     
     

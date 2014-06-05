@@ -24,6 +24,9 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^training/$','chat.views.training',name='training'),
     url(r'^leaderboard/$', 'chat.views.leaderboard', name='leaderboard'),
+    url(r'^twitchAuth', 'chat.views.twitchAuth', name='twitchAuth'),
+    url(r'^terms/$', 'chat.views.terms', name='terms'),
+    url(r'^privacy/$', 'chat.views.privacy', name='privacy'),
     #url("", include('django_socketio.urls')),
     
 )

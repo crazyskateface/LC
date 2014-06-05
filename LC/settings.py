@@ -59,6 +59,16 @@ WSGI_APPLICATION = 'LC.wsgi.application'
 TEMPLATE_DIRS = {
                  os.path.join(BASE_DIR, 'templates').replace('\\','/'),
                  }
+
+
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+                           'chat.auth_backend.PasswordlessAuthBackend',
+                           )
+
+
+
+
+
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 

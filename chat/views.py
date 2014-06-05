@@ -1,5 +1,6 @@
 from chat.models import Comments, User, UserProfile, Emblem
 from chat.verify import ver_ign
+from chat.twitch import get_twitch_user
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext, loader
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
@@ -50,6 +51,7 @@ def verify(request, ign):
     
     
     prof = UserProfile.objects.get(user=request.user)
+    
     if UserProfile.objects.filter(ign=ign).exists():
         contents = True
         return render(request, 'chat/profile.html', locals())
@@ -61,8 +63,6 @@ def verify(request, ign):
         finders = True
         return render(request, 'chat/profile.html', {'finders':finders, 'prof':prof})
     prof.verified = content['verified']
-    print(prof.verified)
-    
     if content['verified']:
         prof.ign = ign
         print(prof.ign)
@@ -74,9 +74,6 @@ def verify(request, ign):
             prof.division = divisions[div]
         
     prof.save()
-    result = add.delay(4,4 )
-    print(result)
-    print(result.backend)
     return render(request, 'chat/profile.html', locals())
 
 
@@ -242,6 +239,56 @@ def register(request):
             { 'user_form':user_form, 'registered':registered},
             context)
             
+def twitchAuth(request):
+    code = request.GET.get('code','')
+    username = ''
+    user = ''
+    if code != '':
+        username = get_twitch_user(code)
+    
+        if username != '':
+            # have username so if exists login if not register dat hoe
+            try:
+                user = User.objects.get(username=username)
+            except:
+                pass
+            if user != '':
+                #user is in system...login!!!
+                if user.is_active:
+                    
+                    user = authenticate(username=username,nope='yes') #auth w/ no pass
+                    login(request, user)
+                    return HttpResponseRedirect('/')
+                else:
+                    return HttpResponse(username +' is not working')
+            else:
+                #user is not in system ...register dat hoe
+                
+                user_obj = User()
+                user_obj.username = username
+                user_obj.set_password = code
+                user_obj.save()
+                ign = 'guest-'+username
+                profile = UserProfile()
+                profile.user = user_obj
+                
+                # did the user provide a 
+                profile.ign = 'guest-'+user_obj.username
+                
+                profile.verified = False;
+                profile.save()
+                
+#                 registered = True
+                usera = authenticate(username=user_obj.username, password=code)
+                login(request, usera)
+#                 print(profile.ign+' logged in')
+                return HttpResponseRedirect('/profile/')
+            
+    else:
+        return HttpResponse("code didn't work dummy")
+            
+            
+            
 # log the balls in    
 def loginz(request):
     context = RequestContext(request)
@@ -285,6 +332,12 @@ def leaderboard(request):
     
 def handler404(request):
     return render(request, '404.html')
+
+def terms(request):
+    return render(request,'terms.html')
+
+def privacy(request):
+    return render(request, 'privacy.html')
     
 
     
