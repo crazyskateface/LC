@@ -4,7 +4,9 @@
 <script type="text/javascript">
 	function verify(){
 		var val =$("#ign_verify").val();
+		
 		if(val.length > 0){
+			val = val.replace(" ","");
 			window.location="/verify/"+val+"/"
 		}
 	}

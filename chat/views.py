@@ -49,7 +49,6 @@ def room(request, room):
 @login_required(login_url="/login/")
 def verify(request, ign):
     
-    
     prof = UserProfile.objects.get(user=request.user)
     
     if UserProfile.objects.filter(ign=ign).exists():

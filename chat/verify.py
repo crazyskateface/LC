@@ -47,7 +47,7 @@ def ver_ign(ign):
     data = data[str(idizzle)]
     pages = data['pages']
     for i in pages:
-        if i['name'] == 'AP':
+        if i['name'] == ign:
             #print i['name']
             verified = True
             print('\n Verified!')

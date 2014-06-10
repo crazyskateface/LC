@@ -20,14 +20,16 @@
 /* Declare heights because of positioning of img element */
 .carousel .item {
   height: 500px;
-  background-color: #777;
+  background-color: #383838;
 }
 .carousel-inner > .item > img {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
-  min-width: 100%;
+  /*min-width: 100%;*/
   height: 500px;
+  margin-left:auto;
+  margin-right:auto;
 }
 </style>
 
@@ -43,7 +45,7 @@
       </ol>
       <div class="carousel-inner">
         <div class="item active">
-          <img src="http://blairvonf.files.wordpress.com/2012/10/rift_1-1_turret1.jpg" alt="First slide" style="opacity:0.8;">
+          <img class="img" src="{{STATIC_URL}}Image_Slide_2.jpg" alt="First slide" style="opacity:0.8;">
           <div class="container">
             <div class="carousel-caption" style="background-color:rgba(150,150,150,0);width:100%;left:0;">
               <h1>LEAGUEchat</h1>
@@ -64,7 +66,7 @@
           </div>
         </div>
         <div class="item">
-          <img data-src="holder.js/900x500/auto/#555:#5a5a5a/text:Third slide" alt="Third slide">
+          <img src="{{STATIC_URL}}Image_Slide_3.jpg" alt="Third slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>One more for good measure.</h1>
@@ -86,19 +88,19 @@
       <!-- Three columns of text below the carousel -->
       <div class="row">
         <div class="col-lg-4" style="color:#DDDDDD;">
-          <img class="img-circle" height="140" width="140" src="{{STATIC_URL}}teemoLook.png" alt="Find players!">
+          <img class="img" src="{{STATIC_URL}}teemo.png" alt="Find players!">
           <h2>I'll scout ahead</h2>
           <p>LEAGUEchat makes it easy to find other players to learn from and to play with. Bringing together players of the same caliber and of more skill to help new players.</p>
           <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4" style="color:#DDDDDD;">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
+          <img class="img" src="{{STATIC_URL}}team2.png">
           <h2>Teams all day</h2>
           <p>LEAGUEchat makes it easy for players to find teams. We have specific chat rooms to find players of similar skill level. Finding a group to play with has never been easier.</p>
           <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4" style="color:#DDDDDD;">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
+          <img class="img" src="{{STATIC_URL}}duo.png" alt="Generic placeholder image">
           <h2>Duo Partners</h2>
           <p>LEAGUEchat brings together duo partners of similar caliber to take on the rift. Sometimes going at it alone can be fearful, but with a friend ranked fear can drift away.</p>
           <p><a class="btn btn-default" href="/chat/" role="button">Chat now &raquo;</a></p>

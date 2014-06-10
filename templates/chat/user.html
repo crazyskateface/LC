@@ -5,7 +5,7 @@
 <style type="text/css">
 	
 	  .user{
-	  	max-width: 800px;
+	  	max-width: 1000px;
         padding: 19px 29px 29px;
         margin: 0 auto 20px;
         background-color: #fff;
@@ -26,7 +26,7 @@
 
 
 
-<div class='container'style="padding-top:100px;" >
+<div class='container-fluid'style="padding-top:100px;" >
 	<div class="user" >
 		
 		
@@ -42,12 +42,33 @@
 <h2 class="user-heading"><img class="img-rounded" width="100" height="100" src="{{STATIC_URL}}icon-user-default.png"> {{userProf.ign}}</h2>
 <hr width="700"/>
 
+<div class="row">
+	<div class="col-md-5">
+		Douche McNastyson @ Whore Island
+		<br />
+		<br />
+		<a href="https://www.facebook.com/crazyskateface" target="_blank"><img src="{{STATIC_URL}}FB-f-Logo__blue_29.png" height="40" width="40" style="float:left;margin-left:0;" ></a>
+		<a href="https://twitter.com/crazyskateface" target="_blank"><img src="{{STATIC_URL}}Twitter_logo_blue.png" height="40" width="40" style="float:left;margin-left:40px;"></a>
+	</div>
+	<div class="col-md-5">
+	
+		<h3>Rank: {{userProf.tier}} {{userProf.division}}</h3>
+		<br />
+		<h3>Primary role: {{userProf.primRole}}</h3>
+		<br />
+		<h3>Secondary role: {{userProf.secRole}}</h3>
+		<br />
+	</div>
+	<div class="col-md-2">
+		
+	</div>
+	
+	
+</div>
+<div style="overflow-x:scroll;white-space:nowrap;">
+<iframe width="300" height="169" src="//www.youtube.com/embed/FSauMwWZABs" frameborder="0" allowfullscreen autohide></iframe><iframe width="300" height="169" src="//www.youtube.com/embed/FSauMwWZABs" frameborder="0" allowfullscreen autohide></iframe><iframe width="300" height="169" src="//www.youtube.com/embed/FSauMwWZABs" frameborder="0" allowfullscreen autohide></iframe><iframe width="300" height="169" src="//www.youtube.com/embed/FSauMwWZABs" frameborder="0" allowfullscreen autohide></iframe><iframe width="300" height="169" src="//www.youtube.com/embed/FSauMwWZABs" frameborder="0" allowfullscreen autohide></iframe>
+</div>
 <br />
-<h3>Rank: {{userProf.tier}} {{userProf.division}}</h3>
-<br />
-<h3>Primary role: {{userProf.primRole}}</h3>
-<br />
-<h3>Secondary role: {{userProf.secRole}}</h3>
 
 <object type="application/x-shockwave-flash" height="378" width="620" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={{userProf.ign}}" bgcolor="#000000">
 		<param name="allowFullScreen" value="true" />

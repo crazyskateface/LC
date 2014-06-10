@@ -205,6 +205,7 @@ io.sockets.on('connection', function (socket) {
     	nickname = name;
     	subnickname = name;
     	mod = isMod;
+    	console.log('mod? = '+mod.toString());
     	socket.join(room);
     	socket.broadcast.to(room).emit('new user connected',name);
     	nicknames[nickname] = socket.id;
@@ -218,30 +219,19 @@ io.sockets.on('connection', function (socket) {
     	};
     	var req = http.request(options, function(res){
     		res.setEncoding('utf8');
-    		res.on('data', function(emblem){
-    			// console.log("HWWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-    			//console.log(emblem);
+    		res.on('data', function(emblem){    			
     			emblemw = emblem.split(":");
     			emblemw = emblemw[0]+':'+emblemw[1];
     			infow = emblem.substring(emblemw.length+1);
-    			
 		    	emblems[name] = emblemw;
-		    	
 		    	infow = infow.split(":");
-		    	
-		    	
 		    	info[subnickname] = [];
 		    	info[subnickname][0] = infow[0];
 		    	info[subnickname][1] = infow[1];
 		    	info[subnickname][2] = infow[2];
 		    	info[subnickname][3] = infow[3];
-		    	//console.log(info);
-		    		    	//socket.broadcast.to(room).emit('new user', inroom[room],emblems);
-		    	//socket.emit('new user', nicknames, emblems);
-		    	
-		    	
 		    	io.sockets.in(room).emit('new user', getClientsIn(room),emblems);
-		    	//getClientsIn(room);
+		    	
     		});
     	});
     	req.write(values);
@@ -266,7 +256,7 @@ io.sockets.on('connection', function (socket) {
                 // if(message != 'Everything worked :)'){
                     // console.log('Message: ' + message);
                     //info[subnickname] = message;
-                    console.log(info);
+                    //console.log(info);
                 
             });
         });
