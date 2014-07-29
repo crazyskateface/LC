@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <style type="text/css">
 	
 
@@ -23,7 +22,7 @@
       .form-login .checkbox {
         margin-bottom: 10px;
       }
-      .form-login input[type="text"],
+      .form-login input[type="email"],
       .form-login input[type="password"] {
         font-size: 16px;
         height: auto;
@@ -46,9 +45,9 @@
             
             <h2 class="form-login-heading">Login</h2>
             <span class="text-danger">{{ errors }}</span>
-            <input type="text" class="input-block-level" placeholder="username" name="username" value=""  />
+            <input type="email" class="input-block-level" placeholder="email" name="username" value=""  required/>
             <br />
-            <input type="password" class="input-block-level" placeholder="password" name="password" value="" />
+            <input type="password" class="input-block-level" placeholder="password" name="password" value="" required/>
             <br />
 
             <button class="btn btn-large btn-primary" type="submit">Login</button>

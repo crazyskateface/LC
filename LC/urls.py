@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^twitchAuth', 'chat.views.twitchAuth', name='twitchAuth'),
     url(r'^terms/$', 'chat.views.terms', name='terms'),
     url(r'^privacy/$', 'chat.views.privacy', name='privacy'),
+    url(r'^msg/$', 'chat.views.msg', name='msg'),
+    url(r'^msg/(?P<serial_number>[\d\w]{8})/$','chat.views.msgt',name='msgt'),
     #url("", include('django_socketio.urls')),
     
 )

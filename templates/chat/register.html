@@ -22,7 +22,7 @@
       .form-signup .checkbox {
         margin-bottom: 10px;
       }
-      .form-signup input[type="text"],
+      .form-signup input[type="email"],
       .form-signup input[type="password"] {
         font-size: 16px;
         height: auto;
@@ -45,9 +45,9 @@
 	{% for input in user_form %}
 	{% if input.errors %}<span class="text-danger">{{input.name}}: {{input.errors}}</span>{% else %}{% endif %}
 	{% endfor %}
-	<input id="id_username" class="input-block-level" maxlength="30" name="username" type="text" placeholder="username" /> 
-	<input id="id_password1" class="input-block-level" name="password1" type="password" placeholder="password" />
-	<input id="id_password2" class="input-block-level" name="password2" type="password" placeholder="password again" />
+	<input id="id_username" class="input-block-level" maxlength="30" name="username" type="email" placeholder="email" required/> 
+	<input id="id_password1" class="input-block-level" name="password1" type="password" placeholder="password" required/>
+	<input id="id_password2" class="input-block-level" name="password2" type="password" placeholder="password again" required/>
 	
 	<!-- {{ user_form.as_p }} -->
 	<button class="btn btn-large btn-primary" type="submit">Sign up</button>

@@ -18,6 +18,19 @@ import redis
 
 rooms = ['lobby', 'duos']
 
+@csrf_exempt
+def msg(request=None):
+    if request.method == 'POST':
+        print('::: '+request.POST['sup'])
+        return HttpResponse('ok')
+    else:
+        print('no')
+        return HttpResponse('no')
+
+def msgt(request, serial_number):
+    print(serial_number)
+    return HttpResponse(serial_number)
+
 
 def home(request):
     #prof = UserProfile.objects.get(user=request.user)
@@ -212,7 +225,7 @@ def register(request):
             profile.user = user
             
             # did the user provide a 
-            profile.ign = 'guest-'+user.username
+            profile.ign = 'guest-'+ user.username[0:user.username.index('@')]
             
             profile.verified = False;
             profile.save()
@@ -267,12 +280,12 @@ def twitchAuth(request):
                 user_obj.username = username
                 user_obj.set_password = code
                 user_obj.save()
-                ign = 'guest-'+username
+                ign = 'guest-'+username[0:username.index('@')]
                 profile = UserProfile()
                 profile.user = user_obj
                 
                 # did the user provide a 
-                profile.ign = 'guest-'+user_obj.username
+                profile.ign = ign
                 
                 profile.verified = False;
                 profile.save()
