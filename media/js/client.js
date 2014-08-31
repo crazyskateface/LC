@@ -19,6 +19,8 @@ $(document).ready(function(){
 	var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
 	var box = document.getElementById('comments');
 	var ndata = "";
+	var lm = [];
+	var lm_pos = 0;
 	socket.on('connect', function(){
 		
 		socket.emit('set nickname', name,brauns);
@@ -93,13 +95,71 @@ $(document).ready(function(){
 		
 		entry_el.focus();
 	});
-	
-	
+	var up = false;
+	var init = false;
+	entry_el.keydown(function(event){
+		
+		if(event.keyCode == 38){ // key 'up'
+			
+			if(!up && init){
+				lm_pos--;
+			}
+			up = true;init = true;
+			if(lm.length != 0){ // if the list is not empty
+				//alert("up");
+				entry_el.val(lm[lm_pos]);
+				if(lm_pos > 0){
+					lm_pos--;
+					// alert(lm_pos);
+				}
+			}
+			
+		}else if(event.keyCode == 40){ // key 'down'
+			if(up && init){
+				if(lm_pos != 0)
+					lm_pos++;
+				
+			}
+			up = false;
+			if(lm.ength != 0){
+				//alert("down");
+				if(lm_pos < lm.length-1){
+					if(lm_pos == lm.length-2){
+						lm_pos++;
+						entry_el.val(lm[lm_pos]);
+						// alert(lm_pos);
+					}
+					else{
+						lm_pos++;
+						entry_el.val(lm[lm_pos]);
+						//alert(lm_pos);
+					}
+				}
+				else if(lm_pos == lm.length-1 ){
+					entry_el.val('');
+					init = false;
+				}
+			}
+			
+			
+		}
+		
+	});
 	
 	entry_el.keypress(function(event){
 		//when enter is pressed send input value to node server
+		
 		if(event.keyCode !=13) return;
 		var msg = entry_el.attr('value');
+		if(lm.indexOf(msg) != -1 && lm.length != 0){
+			//alert('msg is in lm');
+			index = lm.indexOf(msg)
+			lm.splice(index,1);
+		}
+		lm.push(msg); //put msg in list
+		lm_pos = lm.length-1; //reset msg position
+		
+		//alert(lms);
 		if(msg.substring(0,2) == '/w'){
 			
 			socket.emit('private message',name, msg,function(data){

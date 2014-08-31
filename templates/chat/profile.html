@@ -166,6 +166,51 @@
 	.tab_content {
 		display: none;
 	}
+	
+	[data-tip] {
+	position:relative;
+
+}
+[data-tip]:before {
+	content:'';
+	/* hides the tooltip when not hovered */
+	display:none;
+	content:'';
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid #1a1a1a;	
+	position:absolute;
+	top:30px;
+	left:35px;
+	z-index:8;
+	font-size:0;
+	line-height:0;
+	width:0;
+	height:0;
+}
+[data-tip]:after {
+	display:none;
+	content:attr(data-tip);
+	position:absolute;
+	top:35px;
+	left:0px;
+	padding:5px 5px;
+	background:#1a1a1a;
+	color:#fff;
+	z-index:9;
+	font-size: 0.75em;
+	height:25px;
+	line-height:18px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	white-space:nowrap;
+	word-wrap:normal;
+}
+[data-tip]:hover:before,
+[data-tip]:hover:after {
+	display:block;
+}
 
 </style>
 
@@ -186,6 +231,7 @@
 		<h4>{{prof.user}}</h4>
 		<img src="{{STATIC_URL}}teemo.jpg" height="100" width="100">
 	</div>
+	<br />
 	<div class="col-md-10" style="padding-top:15px;">
 		<!-- tabs -->
 		<div id="tabs_container">
@@ -252,7 +298,7 @@
 				        <br /> and then Type that name here and click Verify. <strong>NO SPACES</strong></code>
 				    <br />
 				    <br />
-				    <label style="color:white;">IGN: </label><input type='text' name='ign_verify' id='ign_verify' required /><input type='submit' name='submit' value='Verify' onclick='verify();' />
+				    <label style="color:white;">IGN: </label><div data-tip="Enter your SUMMONER NAME here! (no spaces!)"><input type='text' name='ign_verify' id='ign_verify' required /></div><input type='submit' name='submit' value='Verify' onclick='verify();' />
 				    <br />{% if content %}<span class='error' style="color:red;">Mastery page not valid.</span>{% elif contents %}<span class='error' style="color:red;">That user already verified!</span>{% elif finders %}<span class='error' style="color:red;">LoL user not found!</span>{% else %}{% endif %}
 				    
 				    <br />

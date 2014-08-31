@@ -44,18 +44,7 @@
             {% csrf_token %}
             
             <h2 class="form-login-heading">Login</h2>
-            <span class="text-danger">{{ errors }}</span>
-            <input type="email" class="input-block-level" placeholder="email" name="username" value=""  required/>
-            <br />
-            <input type="password" class="input-block-level" placeholder="password" name="password" value="" required/>
-            <br />
-
-            <button class="btn btn-large btn-primary" type="submit">Login</button>
-            <br/>
-            {% if input.errors %}<a href="/accounts/password_reset/">Forgot Password?</a>{%else%}{% endif %}
-            <br />
-            <h3>or</h3>
-            <br />
+            
             <a href="https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=iqme1phzcvouk0zuvo68pob2fghzwf1&redirect_uri=http://ec2-54-86-25-186.compute-1.amazonaws.com/twitchAuth&scope=user_read" class="btn btn-large btn-twitch">Log in with <img src="http://www.dafont.com/forum/attach/orig/1/3/134049.png" height="30"></a>
         </form>
         

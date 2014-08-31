@@ -9,7 +9,7 @@ def ver_ign(ign):
     verified = False
     tier = ""
     division = None
-    page = 'https://prod.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+ign+'?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1' 
+    page = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+ign+'?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1' 
     
     # page = 'https://54.225.76.249/api/2.0/custom_reports/?nwlat=30.304855&nwlong=-97.771883&selat=30.292196&selong=-97.759105&max_results=2'
     #page = 'https://54.225.76.249/api/2.0/testers/'
@@ -33,7 +33,7 @@ def ver_ign(ign):
     idizzle = stuff['id']
     
     #print(idizzle)
-    page = 'https://prod.api.pvp.net/api/lol/na/v1.4/summoner/'+str(idizzle)+'/masteries?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
+    page = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/'+str(idizzle)+'/masteries?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
     r = requests.get(page,verify=False)
     
     #print(r.text)
@@ -53,7 +53,7 @@ def ver_ign(ign):
             print('\n Verified!')
     result.append(verified)   
     
-    page = 'https://prod.api.pvp.net/api/lol/na/v2.4/league/by-summoner/'+str(idizzle)+'/entry?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
+    page = 'https://na.api.pvp.net/api/lol/na/v2.4/league/by-summoner/'+str(idizzle)+'/entry?api_key=94c47c80-06cd-47a6-88d8-8a5331ef53b1'
     r = requests.get(page,verify=False)
     print(r.status_code)
     if r.status_code == 404 or r.status_code == "404":

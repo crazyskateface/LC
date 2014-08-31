@@ -153,6 +153,8 @@ def prof(request):
             
             if changed == True:
                 prof.ign = str(c)+'guest-' +prof_form.cleaned_data['ign']
+                prof.division = None
+                prof.tier = None
             
             prof.primRole = prof_form.cleaned_data['primRole']
             prof.secRole = prof_form.cleaned_data['secRole']
@@ -258,13 +260,13 @@ def twitchAuth(request):
     if code != '':
         username = get_twitch_user(code)
     
-        if username != '':
+        if username != '' and username != None:
             # have username so if exists login if not register dat hoe
             try:
                 user = User.objects.get(username=username)
             except:
                 pass
-            if user != '':
+            if user != '' and user != None:
                 #user is in system...login!!!
                 if user.is_active:
                     
@@ -278,6 +280,7 @@ def twitchAuth(request):
                 
                 user_obj = User()
                 user_obj.username = username
+                Debug.Log(username)
                 user_obj.set_password = code
                 user_obj.save()
                 ign = 'guest-'+username[0:username.index('@')]

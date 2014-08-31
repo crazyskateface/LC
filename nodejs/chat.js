@@ -80,6 +80,7 @@ io.sockets.on('connection', function (socket) {
 	var subnickname = "";
 	var room = "lobby";
 	var mod = false;
+	var msgsinarow = 0;
 	// var ip = socket.manager.handshaken[socket.id].address;
 	// console.log(ip);
 	// if(ip){
@@ -87,6 +88,10 @@ io.sockets.on('connection', function (socket) {
 		// socket.emit('banned', ip.address);
 	// }
 	//socket.join(room);
+	setInterval(function(){
+		msgsinarow = 0;
+		stopsend = false;
+	},60000);
 	
 	socket.on('joinRoom', function(roomName,fn){
 		var restriction = [' ','BRONZE','SILVER','GOLD','PLATINUM','DIAMOND','CHALLENGER'];
@@ -237,31 +242,41 @@ io.sockets.on('connection', function (socket) {
     	req.write(values);
     	req.end();
     });
-    
+    stopsend = false;
     //socket.sockets[socket.id].emit
     //Client is sending message through socket.io
     socket.on('send_message', function (message) {
-        values = querystring.stringify({
-            comment: message,
-            sessionid: socket.handshake.cookie['sessionid'],
-        });
-        var options = {
-            host: 'localhost',port: 3000,path: '/node_api',method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': values.length}
-        };
-        //Send message to Django server
-        var req = http.request(options, function(res){
-            res.setEncoding('utf8');
-            //Print out error message
-            res.on('data', function(message){
-                // if(message != 'Everything worked :)'){
-                    // console.log('Message: ' + message);
-                    //info[subnickname] = message;
-                    //console.log(info);
-                
-            });
-        });
-        req.write(values);
-        req.end();
+    	msgsinarow++;
+    	if(msgsinarow > 10){
+    		var to = getClientId(subnickname);
+    		var g = "WARNING"+': '+"too many msgs CALM DOWN SON -- wait 1 minute before sending anymore msgs" + ':'+getNow();
+    		console.log('sending to '+ subnickname);
+    		io.sockets.socket(to).emit('private', g);
+    		stopsend = true;
+    	}
+    	if(!stopsend){
+	        values = querystring.stringify({
+	            comment: message,
+	            sessionid: socket.handshake.cookie['sessionid'],
+	        });
+	        var options = {
+	            host: 'localhost',port: 3000,path: '/node_api',method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded','Content-Length': values.length}
+	        };
+	        //Send message to Django server
+	        var req = http.request(options, function(res){
+	            res.setEncoding('utf8');
+	            //Print out error message
+	            res.on('data', function(message){
+	                // if(message != 'Everything worked :)'){
+	                    // console.log('Message: ' + message);
+	                    //info[subnickname] = message;
+	                    //console.log(info);
+	                
+	            });
+	        });
+	        req.write(values);
+	        req.end();
+	    }
     });
     
     
