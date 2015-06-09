@@ -27,6 +27,7 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -38,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #'django-socketio',
     'chat',
-    'south',
     'storages',
 )
 
@@ -74,11 +74,12 @@ AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbizzle3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbizzle4',
         'USER': 'root',
-        'PASSWORD':'massive1',
-        'HOST': '',
+        'PASSWORD': 'massive1',
+        'HOST': 'localhost',
+        'PORT': '',
         
     }
 }

@@ -21,7 +21,7 @@ def get_role():
     return Roll.objects.get(id=1)
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User)
 #     email = models.EmailField(max_length=100)
     ign = models.CharField(max_length=75, unique=True)
     verified = models.BooleanField(blank=True, default=False)
