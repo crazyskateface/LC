@@ -8,3 +8,5 @@ south
 PostgreSQL
 psycopg2
 requests
+django-storages
+django-celery

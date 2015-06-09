@@ -12,7 +12,7 @@ def get_twitch_user(code):
                 'client_id': 'iqme1phzcvouk0zuvo68pob2fghzwf1',
                 'client_secret':'p3ojlqigc29k0jm0degiqzea3he0yyt',
                 'grant_type': 'authorization_code',
-                'redirect_uri':'http://ec2-54-86-25-186.compute-1.amazonaws.com/twitchAuth',
+                'redirect_uri':'http://52.5.114.50/twitchAuth',
                 'code':code,
     }
     

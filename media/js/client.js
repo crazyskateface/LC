@@ -16,7 +16,7 @@ $(document).ready(function(){
 	var name = document.getElementById("name").value;
 	var brauns =document.getElementById("brauns").value;
 	var room="lobby";
-	var socket = io.connect('ec2-54-86-25-186.compute-1.amazonaws.com',{port: 80,'sync disconnect on unload':true});
+	var socket = io.connect('http://52.5.114.50/',{port: 80,'sync disconnect on unload':true});
 	var box = document.getElementById('comments');
 	var ndata = "";
 	var lm = [];

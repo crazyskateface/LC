@@ -280,7 +280,6 @@ def twitchAuth(request):
                 
                 user_obj = User()
                 user_obj.username = username
-                Debug.Log(username)
                 user_obj.set_password = code
                 user_obj.save()
                 ign = 'guest-'+username[0:username.index('@')]

@@ -3,7 +3,6 @@ set -e
 LOGFILE=/home/ubuntu/LC_chat/logs/gunicorn.log
 LOGDIR=$(dirname $LOGFILE)
 NUM_WORKERS=1
->>>>>>> master
 # user /group to run as
 USER=root
 GROUP=root
