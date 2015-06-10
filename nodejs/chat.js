@@ -313,7 +313,7 @@ io.sockets.on('connection', function (socket) {
 		var dude = checkSockets(socket.id);
 		socket.broadcast.to(room).emit('new user', nicknames, emblems);
 		//socket.emit('new user', nicknames,emblems);
-		socket.broadcast.to(room).emit('user disconnected mother fucker', dude);
+		socket.broadcast.to(room).emit('user disconnected', dude);
 		//socket.disconnect();
 		//console.log(nicknames);
 		//disconnect(socket);
