@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dbizzle4',
         'USER': 'root',
-        'PASSWORD': 'massive1',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
         
